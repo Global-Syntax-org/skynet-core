@@ -5,7 +5,7 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
 ## ✨ Features
 
 - **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model
-- **🔍 Web Search Integration** - DDG Search API for real-time information
+- **🔍 Web Search Integration** - DDG Search for real-time information
 - **💾 Conversation Memory** - Persistent chat history and context management
 - **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
 - **🛡️ Privacy-First** - All AI processing happens locally on your machine
