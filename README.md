@@ -5,7 +5,7 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
 ## ✨ Features
 
 - **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model
-- **🔍 Web Search Integration** - Bing Search API for real-time information
+- **🔍 Web Search Integration** - DDG Search API for real-time information
 - **💾 Conversation Memory** - Persistent chat history and context management
 - **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
 - **🛡️ Privacy-First** - All AI processing happens locally on your machine
@@ -18,7 +18,6 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
 
 - Python 3.10+
 - [Ollama](https://ollama.com/download) installed and running
-- Optional: Bing Search API key for web search
 
 ### Installation
 
@@ -39,11 +38,7 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
    ollama pull mistral
    ```
 
-4. **Configure (Optional)**
-   - Set `BING_API_KEY` environment variable for web search
-   - Or edit `config.yaml` after first run
-
-5. **Launch Skynet Lite**
+4. **Launch Skynet Lite**
    ```bash
    python main.py
    ```
@@ -58,7 +53,7 @@ skynet-lite/
 ├── models/
 │   └── loader.py        # Ollama model interface
 ├── tools/
-│   └── web_search.py    # Bing Search integration
+│   └── web_search.py    # DDG Search integration
 └── plugins/
     └── memory.py        # Conversation memory management
 ```
@@ -71,7 +66,6 @@ Skynet Lite supports multiple configuration methods:
 ```bash
 export OLLAMA_BASE_URL="http://localhost:11434"
 export OLLAMA_MODEL="mistral"
-export BING_API_KEY="your-api-key-here"
 ```
 
 ### Configuration File
@@ -80,9 +74,6 @@ Create or edit `config.yaml`:
 ollama:
   base_url: "http://localhost:11434"
   model: "mistral"
-  
-bing:
-  api_key: "your-api-key-here"
   
 memory:
   max_turns: 10
