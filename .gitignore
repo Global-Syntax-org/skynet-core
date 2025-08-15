@@ -8,3 +8,4 @@ __pycache__/
 .DS_Store
 test_components.py
 test_ollama.py
+.venv/
