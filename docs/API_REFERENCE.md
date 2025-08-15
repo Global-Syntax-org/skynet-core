@@ -20,34 +20,173 @@ class SkynetLite:
             True if initialization successful, False otherwise
         """
     
+    async def chat(self, user_message: str) -> str:
+        """Process a single chat message (for web API)
+        
+        Args:
+            user_message: User input string
+            
+        Returns:
+            AI response string
+            
+        Raises:
+            Exception: If processing fails
+        """
+    
     async def chat_loop(self) -> None:
-        """Main chat interaction loop"""
+        """Main interactive chat loop (for console)"""
     
-    async def _needs_web_search(self, query: str) -> bool:
-        """Determine if query requires web search
+    async def shutdown(self) -> None:
+        """Clean up resources"""
+
+### LoaderManager
+
+Manages different AI model loaders with automatic fallback.
+
+```python
+class LoaderManager:
+    """Manages different model loaders with fallback support"""
+    
+    def __init__(self):
+        self.loader = None
+        self.model = None
+
+    async def initialize(self) -> bool:
+        """Initialize the best available model loader
+        
+        Tries loaders in this order:
+        1. Ollama (local LLMs)
+        2. OpenAI (if OPENAI_API_KEY set)
+        3. Gemini (if GEMINI_API_KEY set)
+        4. Claude (if ANTHROPIC_API_KEY set)
+        5. GitHub Copilot (if GITHUB_COPILOT_TOKEN set)
+        6. Local fallback
+        
+        Returns:
+            True if any loader initialized successfully
+        """
+
+    async def shutdown(self) -> None:
+        """Clean up resources"""
+```
+
+### MemoryManager
+
+Simple conversation memory management.
+
+```python
+class MemoryManager:
+    """Simple conversation memory management"""
+    
+    def __init__(self, max_history: int = 10):
+        """Initialize with maximum conversation history
         
         Args:
-            query: User query string
-            
-        Returns:
-            True if web search needed, False for local processing
+            max_history: Maximum number of conversation turns to remember
         """
     
-    async def _handle_local_query(self, query: str) -> str:
-        """Handle query using local LLM only
-        
-        Args:
-            query: User query string
-            
-        Returns:
-            Generated response from local LLM
-        """
+    def add_user_message(self, message: str) -> None:
+        """Add user message to conversation history"""
     
-    async def _handle_web_search_query(self, query: str) -> str:
-        """Handle query requiring web search
+    def add_assistant_message(self, message: str) -> None:
+        """Add assistant response to conversation history"""
+    
+    def get_conversation_history(self) -> str:
+        """Get formatted conversation history"""
+    
+    def clear_history(self) -> None:
+        """Clear all conversation history"""
+```
+
+## Web API Endpoints
+
+### Chat Endpoint
+
+**URL:** `POST /chat`
+
+**Request Body:**
+```json
+{
+    "message": "Your question here"
+}
+```
+
+**Response:**
+```json
+{
+    "response": "AI response text",
+    "timestamp": "2025-08-15T14:30:00.000Z",
+    "session_id": "uuid-string"
+}
+```
+
+**Error Response:**
+```json
+{
+    "error": "Error description"
+}
+```
+
+### Clear Session
+
+**URL:** `POST /clear`
+
+**Response:**
+```json
+{
+    "status": "cleared",
+    "session_id": "new-uuid-string"
+}
+```
+
+### Health Check
+
+**URL:** `GET /health`
+
+**Response:**
+```json
+{
+    "status": "ok",
+    "service": "skynet-lite-web"
+}
+```
+
+### Main Interface
+
+**URL:** `GET /`
+
+Returns the main chat interface HTML page.
+
+## Configuration Classes
+
+### Config
+
+Configuration management with multiple sources.
+
+```python
+@dataclass
+class Config:
+    """Configuration with environment variable support"""
+    
+    # Ollama Configuration
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "mistral"
+    
+    # Search Configuration  
+    enable_web_search: bool = True
+    search_provider: str = "duckduckgo"  # duckduckgo, azure, google
+    
+    # Memory Configuration
+    max_memory_turns: int = 10
+    
+    @classmethod
+    def from_env(cls) -> 'Config':
+        """Load configuration from environment variables"""
         
-        Args:
-            query: User query string
+    @classmethod
+    def from_file(cls, config_path: str) -> 'Config':
+        """Load configuration from YAML file"""
+```
             
         Returns:
             Response based on web search results and LLM processing

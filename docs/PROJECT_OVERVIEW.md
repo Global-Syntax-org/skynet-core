@@ -1,9 +1,35 @@
 # Skynet Lite - Project Overview
 
 ## Current Status
-Skynet Lite is a modular AI chatbot system that combines local LLM processing with web search capabilities, designed for robotics integration and privacy-first operation.
+Skynet Lite is a production-ready modular AI chatbot system that combines local LLM processing with web search capabilities, featuring both console and web interfaces. Designed for robotics integration, privacy-first operation, and extensible plugin architecture.
+
+## Key Achievements
+- ✅ Multi-model support (Ollama, OpenAI, Claude, Gemini, GitHub Copilot)
+- ✅ Web UI with Flask-based responsive interface
+- ✅ DuckDuckGo search integration with fallback providers
+- ✅ Persistent conversation memory
+- ✅ Comprehensive test suite and diagnostic tools
+- ✅ Docker-ready configuration
+- ✅ Production deployment scripts
 
 ## Architecture Overview
+
+### System Architecture
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Web Client    │◄──►│   Flask App     │◄──►│  Skynet Core    │
+│  (Browser UI)   │    │  (Web Server)   │    │ (AI Orchestrator│
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                       ▲
+                                                       │
+         ┌─────────────────┬─────────────────┬─────────────────┐
+         │                 │                 │                 │
+         ▼                 ▼                 ▼                 ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ Model Loaders   │ │   Web Search    │ │ Memory Manager  │ │   Config Mgmt   │
+│ (Ollama/API)    │ │ (DDG/Azure/etc) │ │ (Conversation)  │ │ (Multi-source)  │
+└─────────────────┘ └─────────────────┘ └─────────────────┘ └─────────────────┘
+```
 
 ### Core Components
 
@@ -11,26 +37,79 @@ Skynet Lite is a modular AI chatbot system that combines local LLM processing wi
 - **Purpose**: Central chat loop and component coordination
 - **Pattern**: Async/await with dependency injection
 - **Key Features**:
+  - Multi-model loader management with automatic fallback
   - Query classification (local vs web search)
   - Context-aware conversation management
-  - Graceful error handling and fallback mechanisms
+  - Graceful error handling and recovery mechanisms
+  - Support for both programmatic and interactive use
 
 ```python
 class SkynetLite:
     """Main orchestrator following modular architecture"""
     
     def __init__(self):
-        self.config = Config()                    # Configuration management
-        self.kernel = sk.Kernel()                 # Semantic Kernel integration
-        self.model_loader = OllamaModelLoader()   # Local LLM interface
-        self.search_tool = None                   # Web search (lazy initialization)
-        self.memory_manager = ChatMemoryManager() # Conversation memory
+        self.config = Config()                      # Configuration management
+        self.loader_manager = LoaderManager()       # Multi-model support
+        self.memory_manager = MemoryManager()       # Conversation memory
+        self.search_tool = None                     # Web search (lazy init)
     
     async def initialize(self) -> bool:
         """Async initialization with dependency checking"""
         
+    async def chat(self, user_message: str) -> str:
+        """Single message processing for web API"""
+        
     async def chat_loop(self) -> None:
-        """Main interaction loop with error handling"""
+        """Interactive console loop"""
+```
+
+#### 2. Web Interface (`web/app.py`)
+- **Purpose**: Flask-based web UI for browser interaction
+- **Pattern**: RESTful API with session management
+- **Key Features**:
+  - Responsive design with mobile support
+  - Real-time chat interface
+  - Session persistence and memory management
+  - Background async processing
+  - Health check and diagnostics endpoints
+
+```python
+@app.route('/chat', methods=['POST'])
+def chat():
+    """Handle chat messages via HTTP POST"""
+    
+@app.route('/clear', methods=['POST']) 
+def clear_session():
+    """Clear conversation history"""
+    
+@app.route('/health')
+def health():
+    """System health check"""
+```
+
+#### 3. Model Loader Management (`loaders/`)
+- **Purpose**: Unified interface for multiple AI model providers
+- **Pattern**: Strategy pattern with automatic fallback
+- **Supported Models**:
+  - **Ollama** (local LLMs) - Primary choice
+  - **OpenAI** (GPT models) - API fallback
+  - **Claude** (Anthropic) - API fallback  
+  - **Gemini** (Google) - API fallback
+  - **GitHub Copilot** - Development assistant
+  - **Local Model** - Basic fallback
+
+```python
+class LoaderManager:
+    """Manages different model loaders with fallback support"""
+    
+    async def initialize(self):
+        """Try loaders in priority order"""
+        # 1. Ollama (if running)
+        # 2. OpenAI (if API key available)
+        # 3. Claude (if API key available)
+        # 4. Gemini (if API key available)
+        # 5. Copilot (if token available)
+        # 6. Local fallback
 ```
 
 #### 2. Configuration Management (`config.py`)

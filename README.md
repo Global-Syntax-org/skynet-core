@@ -1,13 +1,15 @@
 # 🤖## ✨ Features
 
-- **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model
+- **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model  
 - **🔍 Web Search Integration** - DuckDuckGo by default, with optional Azure Search and Google Custom Search providers
 - **💾 Conversation Memory** - Persistent chat history and context management
 - **🌐 Web Interface** - Clean, responsive Flask-based web UI alongside console interface
 - **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
 - **🛡️ Privacy-First** - All AI processing happens locally on your machine
 - **🚀 Async Architecture** - High-performance async/await implementation
-- **🎯 Robotics Ready** - Designed for integration with ROS and Webotste
+- **🎯 Robotics Ready** - Designed for integration with ROS and Webots
+- **🔄 Multi-Model Support** - Fallback support for OpenAI, Claude, Gemini, and GitHub Copilot
+- **🛠️ Development Tools** - Diagnostic utilities and test scripts includedte
 
 A lightweight, local AI chatbot powered by Ollama and enhanced with web search capabilities. Built for robotics simulation, swarm intelligence, and general AI assistance with privacy-first local LLM execution.
 
@@ -33,7 +35,7 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/skynet-lite.git
+   git clone https://github.com/StuxnetStudios/skynet-lite.git
    cd skynet-lite
    ```
 
@@ -41,6 +43,10 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
    ```bash
    python setup.py
    ```
+   This will:
+   - Create a virtual environment
+   - Install all dependencies
+   - Verify system requirements
 
 3. **Start Ollama and pull the Mistral model**
    ```bash
@@ -60,6 +66,12 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
    cd web
    python run.py
    # Open http://localhost:5000 in your browser
+   ```
+   
+   **Alternative web startup:**
+   ```bash
+   cd web
+   python app.py
    ```
 
 ## 🏗️ Architecture
@@ -185,6 +197,26 @@ Run the test suite:
 python -m pytest tests/ -v
 ```
 
+Test specific components:
+```bash
+# Test core functionality
+python test_components.py
+
+# Test Ollama integration
+python test_ollama.py
+
+# Test web search
+python test_ddg_search.py
+
+# Test web interface
+cd web
+python test_web.py
+
+# Run diagnostics
+cd web
+python diagnose.py
+```
+
 Run with coverage:
 ```bash
 python -m pytest tests/ --cov=. --cov-report=html
@@ -244,13 +276,18 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🔮 Roadmap
 
+- [x] Web UI interface 
+- [x] Multi-model support (OpenAI, Claude, Gemini, Copilot)
+- [x] DuckDuckGo search integration
+- [x] Flask web interface with diagnostics
 - [ ] Voice interface integration
-- [ ] Multi-model support (GPT-4, Claude, etc.)
 - [ ] Advanced robotics control plugins
 - [ ] Swarm intelligence coordination
 - [ ] Custom training pipeline
-- [ ] Web UI interface
 - [ ] Docker containerization
+- [ ] API authentication and rate limiting
+- [ ] WebSocket support for real-time chat
+- [ ] Plugin marketplace
 
 ---
 
