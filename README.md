@@ -6,7 +6,8 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
 
 - **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model
 - **🔍 Web Search Integration** - DDG Search for real-time information
-- **💾 Conversation Memory** - Persistent chat history and context management
+- **� Web Search Integration** - DuckDuckGo by default, with optional Azure Search and Google Custom Search providers
+- **�💾 Conversation Memory** - Persistent chat history and context management
 - **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
 - **🛡️ Privacy-First** - All AI processing happens locally on your machine
 - **🚀 Async Architecture** - High-performance async/await implementation
@@ -53,7 +54,7 @@ skynet-lite/
 ├── models/
 │   └── loader.py        # Ollama model interface
 ├── tools/
-│   └── web_search.py    # DDG Search integration
+│   └── web_search.py    # DuckDuckGo + Azure Search + Google Custom Search integration
 └── plugins/
     └── memory.py        # Conversation memory management
 ```
@@ -66,6 +67,16 @@ Skynet Lite supports multiple configuration methods:
 ```bash
 export OLLAMA_BASE_URL="http://localhost:11434"
 export OLLAMA_MODEL="mistral"
+
+# Web search providers (choose one)
+# DuckDuckGo requires no credentials and is used by default
+# To use Azure Cognitive Services Bing Search (Azure Search), set:
+export AZURE_SEARCH_KEY="<your_azure_search_key>"
+export AZURE_SEARCH_ENDPOINT="https://<resource-name>.cognitiveservices.azure.com/bing/v7.0/search"
+
+# To use Google Custom Search JSON API, set:
+export GOOGLE_API_KEY="<your_google_api_key>"
+export GOOGLE_CX="<your_custom_search_engine_id>"
 ```
 
 ### Configuration File
@@ -161,6 +172,7 @@ python -m pytest tests/ --cov=. --cov-report=html
 - **semantic-kernel** - AI orchestration framework
 - **ollama** - Local LLM integration
 - **aiohttp/httpx** - Async HTTP clients
+ - **beautifulsoup4 & lxml** - HTML parsing for DuckDuckGo scraping (if used)
 - **pyyaml** - Configuration management
 - **rich** - Enhanced terminal output
 

@@ -38,6 +38,34 @@ class LoaderManager:
         except Exception as e:
             logger.warning(f"Failed to initialize OllamaModelLoader: {e}. Trying Claude.")
         
+        # Try OpenAI (ChatGPT) next if API key is available
+        if os.getenv('OPENAI_API_KEY'):
+            try:
+                from loaders.openai_loader import OpenAIModelLoader
+                self.loader = OpenAIModelLoader()
+                if not await self.loader.initialize():
+                    raise RuntimeError("Failed to initialize OpenAI loader")
+                logger.info("Using OpenAIModelLoader")
+                return True
+            except (ModuleNotFoundError, ImportError) as e:
+                logger.warning(f"OpenAIModelLoader not available: {e}")
+            except Exception as e:
+                logger.error(f"Failed to initialize OpenAIModelLoader: {e}")
+
+        # Try Gemini (Google) next if API key is available
+        if os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY'):
+            try:
+                from loaders.gemini_loader import GeminiModelLoader
+                self.loader = GeminiModelLoader()
+                if not await self.loader.initialize():
+                    raise RuntimeError("Failed to initialize Gemini loader")
+                logger.info("Using GeminiModelLoader")
+                return True
+            except (ModuleNotFoundError, ImportError) as e:
+                logger.warning(f"GeminiModelLoader not available: {e}")
+            except Exception as e:
+                logger.error(f"Failed to initialize GeminiModelLoader: {e}")
+
         # Try Claude second if API key is available
         if os.getenv('ANTHROPIC_API_KEY'):
             try:
@@ -57,6 +85,20 @@ class LoaderManager:
         else:
             logger.info("No ANTHROPIC_API_KEY found, skipping Claude.")
         
+        # Try Copilot if token is available
+        if os.getenv('GITHUB_COPILOT_TOKEN'):
+            try:
+                from loaders.copilot_loader import CopilotModelLoader
+                self.loader = CopilotModelLoader()
+                if not await self.loader.initialize():
+                    raise RuntimeError("Failed to initialize Copilot loader")
+                logger.info("Using CopilotModelLoader")
+                return True
+            except (ModuleNotFoundError, ImportError) as e:
+                logger.warning(f"CopilotModelLoader not available: {e}")
+            except Exception as e:
+                logger.error(f"Failed to initialize CopilotModelLoader: {e}")
+
         # Fall back to LocalModelLoader
         try:
             from loaders.local_loader import LocalModelLoader

@@ -1,63 +1,62 @@
 """
 Web Search integration for Skynet Lite
-Provides real-time web search capabilities with both Bing and DuckDuckGo support
+Provides real-time web search capabilities with Azure Search and DuckDuckGo support
 """
 
 import httpx
 import json
 import re
+import os
 from urllib.parse import quote_plus, urljoin
 from typing import List, Dict, Optional, Any
 from bs4 import BeautifulSoup
 import asyncio
 
 
-class BingSearchTool:
-    def __init__(self, api_key: Optional[str] = None):
+class AzureSearchTool:
+    def __init__(self, api_key: Optional[str] = None, endpoint: Optional[str] = None):
+        # API key and endpoint can be provided directly or via env vars
         self.api_key = api_key
-        self.endpoint = "https://api.bing.microsoft.com/v7.0/search"
+        # Prefer endpoint from environment; do not hardcode provider-specific URL
+        import os
+        self.endpoint = os.getenv('AZURE_SEARCH_ENDPOINT', endpoint)
         self.client = httpx.AsyncClient(timeout=10.0)
         
     async def search(self, query: str, count: int = 5, market: str = "en-US") -> List[Dict]:
-        """
-        Perform a Bing web search
-        
+        """Perform an Azure Search web query.
+
         Args:
             query: Search query string
             count: Number of results to return (max 50)
             market: Market/locale for search results
-            
+
         Returns:
             List of search result dictionaries
         """
         if not self.api_key:
-            raise ValueError("Bing API key is required for web search")
-        
+            raise ValueError("Azure Search API key is required for web search")
+
         headers = {
             "Ocp-Apim-Subscription-Key": self.api_key,
             "User-Agent": "SkynetLite/1.0"
         }
-        
+
         params = {
             "q": query,
-            "count": min(count, 50),  # Bing API limit
+            "count": min(count, 50),  # API limit
             "mkt": market,
             "responseFilter": "Webpages",
             "safeSearch": "Moderate"
         }
-        
+
         try:
-            response = await self.client.get(
-                self.endpoint,
-                headers=headers,
-                params=params
-            )
+            response = await self.client.get(self.endpoint, headers=headers, params=params)
             response.raise_for_status()
-            
+
             data = response.json()
             web_pages = data.get("webPages", {})
             results = web_pages.get("value", [])
-            
+
             # Format results for easier consumption
             formatted_results = []
             for result in results:
@@ -67,15 +66,16 @@ class BingSearchTool:
                     "snippet": result.get("snippet", ""),
                     "display_url": result.get("displayUrl", "")
                 })
-            
+
             return formatted_results
-            
+
         except httpx.HTTPError as e:
-            print(f"❌ Bing Search API error: {e}")
+            print(f"❌ Azure Search API error: {e}")
             return []
         except Exception as e:
             print(f"❌ Unexpected search error: {e}")
             return []
+        
     
     async def search_and_summarize(self, query: str, max_results: int = 3) -> str:
         """
@@ -114,9 +114,11 @@ class BingSearchTool:
             List of news article dictionaries
         """
         if not self.api_key:
-            raise ValueError("Bing API key is required for news search")
-        
-        news_endpoint = "https://api.bing.microsoft.com/v7.0/news/search"
+            raise ValueError("Azure Search API key is required for news search")
+
+        news_endpoint = self.endpoint or ""
+        # If a specific news endpoint is desired, set AZURE_SEARCH_NEWS_ENDPOINT env var
+        news_endpoint = os.getenv('AZURE_SEARCH_NEWS_ENDPOINT', news_endpoint)
         
         headers = {
             "Ocp-Apim-Subscription-Key": self.api_key,
@@ -157,7 +159,7 @@ class BingSearchTool:
             return formatted_articles
             
         except httpx.HTTPError as e:
-            print(f"❌ Bing News API error: {e}")
+            print(f"❌ Azure News API error: {e}")
             return []
         except Exception as e:
             print(f"❌ Unexpected news search error: {e}")
@@ -175,23 +177,23 @@ class BingSearchTool:
 
 
 # Semantic Kernel compatible search engine
-class BingSearchEngine:
-    """Semantic Kernel compatible wrapper for Bing Search"""
-    
-    def __init__(self, api_key: str):
-        self.search_tool = BingSearchTool(api_key)
-    
+class AzureSearchEngine:
+    """Semantic Kernel compatible wrapper for Azure/Bing Search"""
+
+    def __init__(self, api_key: str, endpoint: Optional[str] = None):
+        self.search_tool = AzureSearchTool(api_key=api_key, endpoint=endpoint)
+
     async def search_async(self, query: str, count: int = 5, offset: int = 0) -> str:
         """Search and return formatted results for Semantic Kernel"""
         results = await self.search_tool.search(query, count=count)
-        
+
         if not results:
             return f"No results found for: {query}"
-        
+
         formatted = f"Search results for '{query}':\n\n"
         for i, result in enumerate(results, 1):
             formatted += f"{i}. {result['title']}\n{result['snippet']}\nURL: {result['url']}\n\n"
-        
+
         return formatted.strip()
 
 
@@ -483,6 +485,72 @@ class DuckDuckGoInstantAnswerTool:
             return None
 
 
+class GoogleSearchTool:
+    """Google Custom Search JSON API integration.
+
+    Requires environment variables: GOOGLE_API_KEY and GOOGLE_CX (Custom Search Engine ID).
+    This uses the official Custom Search JSON API and therefore requires an API key
+    and a CSE/engine id (cx).
+    """
+
+    def __init__(self, api_key: Optional[str] = None, cx: Optional[str] = None):
+        self.api_key = api_key or os.getenv('GOOGLE_API_KEY')
+        self.cx = cx or os.getenv('GOOGLE_CX')
+        self.endpoint = 'https://www.googleapis.com/customsearch/v1'
+        self.client = httpx.AsyncClient(timeout=15.0)
+
+    async def close(self):
+        await self.client.aclose()
+
+    async def search(self, query: str, max_results: int = 5) -> List[Dict[str, Any]]:
+        if not self.api_key or not self.cx:
+            raise ValueError('Google API key and CX are required for GoogleSearchTool')
+
+        params = {
+            'key': self.api_key,
+            'cx': self.cx,
+            'q': query,
+            'num': min(max_results, 10),
+        }
+
+        try:
+            resp = await self.client.get(self.endpoint, params=params)
+            resp.raise_for_status()
+            data = resp.json()
+            items = data.get('items', [])
+            results = []
+            for it in items[:max_results]:
+                results.append({
+                    'title': it.get('title', ''),
+                    'url': it.get('link', ''),
+                    'snippet': it.get('snippet', ''),
+                    'display_url': it.get('displayLink', it.get('link', ''))
+                })
+
+            return results
+
+        except httpx.HTTPError as e:
+            print(f"❌ Google Custom Search error: {e}")
+            return []
+        except Exception as e:
+            print(f"❌ Unexpected Google search error: {e}")
+            return []
+
+    async def search_and_summarize(self, query: str, max_results: int = 3) -> str:
+        results = await self.search(query, max_results=max_results)
+        if not results:
+            return f"Sorry, I couldn't find any information about '{query}'"
+
+        summary = f"Here's what I found about '{query}':\n\n"
+        for i, r in enumerate(results, 1):
+            summary += f"{i}. **{r['title']}**\n"
+            if r.get('snippet'):
+                summary += f"   {r['snippet']}\n"
+            summary += f"   Source: {r['display_url']}\n\n"
+
+        return summary.strip()
+
+
 # Factory function for search tool creation
 async def create_search_tool(provider: str = "duckduckgo", use_instant_only: bool = False) -> Any:
     """
@@ -495,19 +563,30 @@ async def create_search_tool(provider: str = "duckduckgo", use_instant_only: boo
     Returns:
         Configured search tool instance
     """
-    if provider.lower() == "duckduckgo":
+    p = provider.lower() if provider else "duckduckgo"
+    if p == "duckduckgo":
         if use_instant_only:
             return DuckDuckGoInstantAnswerTool()
         else:
             return DuckDuckGoSearchTool()
-    elif provider.lower() == "bing":
-        # Legacy Bing support (requires API key)
+    elif p in ("bing", "azure"):
+        # Map legacy 'bing' to Azure Search; look for Azure or legacy env vars
         import os
-        api_key = os.getenv('BING_API_KEY')
+        api_key = os.getenv('AZURE_SEARCH_KEY') or os.getenv('AZURE_SEARCH_API_KEY') or os.getenv('BING_API_KEY')
+        endpoint = os.getenv('AZURE_SEARCH_ENDPOINT')
         if not api_key:
-            print("⚠️ Bing API key not found, falling back to DuckDuckGo")
+            print("⚠️ Azure/Bing API key not found, falling back to DuckDuckGo")
             return DuckDuckGoSearchTool()
-        return BingSearchTool(api_key)
+        return AzureSearchTool(api_key=api_key, endpoint=endpoint)
+    elif p == "google":
+        # Google Custom Search integration (requires GOOGLE_API_KEY + GOOGLE_CX)
+        import os
+        api_key = os.getenv('GOOGLE_API_KEY')
+        cx = os.getenv('GOOGLE_CX')
+        if not api_key or not cx:
+            print("⚠️ Google API key or CX not found, falling back to DuckDuckGo")
+            return DuckDuckGoSearchTool()
+        return GoogleSearchTool(api_key=api_key, cx=cx)
     else:
         # Default to DuckDuckGo
         return DuckDuckGoSearchTool()
