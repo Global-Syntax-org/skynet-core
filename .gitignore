@@ -6,3 +6,5 @@ __pycache__/
 .vscode/
 .idea/
 .DS_Store
+test_components.py
+test_ollama.py
