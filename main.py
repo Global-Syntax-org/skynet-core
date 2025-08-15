@@ -116,14 +116,8 @@ class SkynetLite:
         self.config = self._load_config()
     
     def _load_config(self):
-        """Load configuration (placeholder - implement based on your config system)"""
-        class Config:
-            def __init__(self):
-                self.bing_api_key = os.getenv('BING_API_KEY')
-                self.ollama_model = os.getenv('OLLAMA_MODEL', 'mistral:latest')
-                self.anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
-                self.claude_model = os.getenv('CLAUDE_MODEL', 'claude-3-5-sonnet-20241022')
-        
+        """Load configuration using the proper Config class"""
+        from config import Config
         return Config()
     
     async def initialize(self) -> bool:
@@ -149,13 +143,18 @@ class SkynetLite:
                 except Exception as e:
                     logger.warning(f"Could not verify model availability: {e}")
             
-            # Initialize search tool if API key is available
-            if self.config.bing_api_key:
-                try:
-                    from tools.search_tool import SearchTool  # Assuming this exists
-                    self.search_tool = SearchTool(self.config.bing_api_key)
-                except ImportError:
-                    logger.warning("SearchTool not available. Web search disabled.")
+            # Initialize search tool based on configuration
+            try:
+                from tools.web_search import create_search_tool
+                self.search_tool = await create_search_tool(
+                    provider=getattr(self.config, 'search_provider', 'duckduckgo'),
+                    use_instant_only=not getattr(self.config, 'search_use_instant_answers', True)
+                )
+                logger.info(f"Initialized {self.config.search_provider} search tool")
+            except ImportError:
+                logger.warning("Search tools not available. Web search disabled.")
+            except Exception as e:
+                logger.warning(f"Failed to initialize search tool: {e}. Web search disabled.")
             
             logger.info("Skynet Lite initialized successfully")
             return True
@@ -217,12 +216,9 @@ class SkynetLite:
     
     async def _handle_web_search_query(self, query: str) -> str:
         """Handle queries that require web search"""
-        if not self.config.bing_api_key:
-            return "I need a Bing API key to search the web. Please configure it in config.yaml or set BING_API_KEY environment variable."
-        
         try:
             print("🔍 Searching the web...")
-            # Get search results
+            # Get search results using DuckDuckGo
             search_results = await self.search_tool.search_and_summarize(query, max_results=3)
             
             # Use local LLM to process the search results
