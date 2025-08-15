@@ -22,23 +22,7 @@ class LoaderManager:
 
     async def initialize(self):
         """Initialize the best available model loader"""
-        # Try Ollama first
-        try:
-            from loaders.ollama_loader import OllamaModelLoader
-            self.loader = OllamaModelLoader()
-            
-            # Initialize and test connection
-            if not await self.loader.initialize():
-                raise RuntimeError("Failed to connect to Ollama")
-            
-            logger.info("Using OllamaModelLoader")
-            return True
-        except (ModuleNotFoundError, ImportError):
-            logger.warning("OllamaModelLoader not available. Trying Claude.")
-        except Exception as e:
-            logger.warning(f"Failed to initialize OllamaModelLoader: {e}. Trying Claude.")
-        
-        # Try Claude second if API key is available
+        # Try Claude first if API key is available
         if os.getenv('ANTHROPIC_API_KEY'):
             try:
                 from loaders.claude_loader import ClaudeModelLoader
@@ -54,17 +38,29 @@ class LoaderManager:
                 logger.warning(f"ClaudeModelLoader not available: {e}")
             except Exception as e:
                 logger.error(f"Failed to initialize ClaudeModelLoader: {e}")
-        else:
-            logger.info("No ANTHROPIC_API_KEY found, skipping Claude.")
         
-        # Fall back to LocalModelLoader
+        # Try Ollama second
         try:
-            from loaders.local_loader import LocalModelLoader
-            self.loader = LocalModelLoader()
-            logger.info("Using LocalModelLoader")
+            from loaders.ollama_loader import OllamaModelLoader
+            self.loader = OllamaModelLoader()
+            
+            # Initialize and test connection
+            if not await self.loader.initialize():
+                raise RuntimeError("Failed to connect to Ollama")
+            
+            logger.info("Using OllamaModelLoader")
         except (ModuleNotFoundError, ImportError):
-            logger.error("No model loaders available. Aborting.")
-            raise RuntimeError("No compatible model loaders found")
+            logger.warning("OllamaModelLoader not available. Trying LocalModelLoader.")
+            try:
+                from loaders.local_loader import LocalModelLoader
+                self.loader = LocalModelLoader()
+                logger.info("Using LocalModelLoader")
+            except (ModuleNotFoundError, ImportError):
+                logger.error("No model loaders available. Aborting.")
+                raise RuntimeError("No compatible model loaders found")
+        except Exception as e:
+            logger.error(f"Failed to initialize OllamaModelLoader: {e}")
+            raise RuntimeError(f"Failed to initialize model loader: {e}")
         
         return True
 

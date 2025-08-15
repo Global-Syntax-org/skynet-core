@@ -26,45 +26,20 @@ class LoaderManager:
         try:
             from loaders.ollama_loader import OllamaModelLoader
             self.loader = OllamaModelLoader()
-            
-            # Initialize and test connection
-            if not await self.loader.initialize():
-                raise RuntimeError("Failed to connect to Ollama")
-            
             logger.info("Using OllamaModelLoader")
-            return True
         except (ModuleNotFoundError, ImportError):
-            logger.warning("OllamaModelLoader not available. Trying Claude.")
-        except Exception as e:
-            logger.warning(f"Failed to initialize OllamaModelLoader: {e}. Trying Claude.")
-        
-        # Try Claude second if API key is available
-        if os.getenv('ANTHROPIC_API_KEY'):
+            logger.warning("OllamaModelLoader not available. Trying LocalModelLoader.")
             try:
-                from loaders.claude_loader import ClaudeModelLoader
-                self.loader = ClaudeModelLoader()
-                
-                # Initialize and test connection
-                if not await self.loader.initialize():
-                    raise RuntimeError("Failed to connect to Claude API")
-                
-                logger.info("Using ClaudeModelLoader")
-                return True
-            except (ModuleNotFoundError, ImportError) as e:
-                logger.warning(f"ClaudeModelLoader not available: {e}")
-            except Exception as e:
-                logger.error(f"Failed to initialize ClaudeModelLoader: {e}")
-        else:
-            logger.info("No ANTHROPIC_API_KEY found, skipping Claude.")
+                from loaders.local_loader import LocalModelLoader
+                self.loader = LocalModelLoader()
+                logger.info("Using LocalModelLoader")
+            except (ModuleNotFoundError, ImportError):
+                logger.error("No model loaders available. Aborting.")
+                raise RuntimeError("No compatible model loaders found")
         
-        # Fall back to LocalModelLoader
-        try:
-            from loaders.local_loader import LocalModelLoader
-            self.loader = LocalModelLoader()
-            logger.info("Using LocalModelLoader")
-        except (ModuleNotFoundError, ImportError):
-            logger.error("No model loaders available. Aborting.")
-            raise RuntimeError("No compatible model loaders found")
+        # Initialize the loader
+        if hasattr(self.loader, 'initialize'):
+            await self.loader.initialize()
         
         return True
 
@@ -120,9 +95,7 @@ class SkynetLite:
         class Config:
             def __init__(self):
                 self.bing_api_key = os.getenv('BING_API_KEY')
-                self.ollama_model = os.getenv('OLLAMA_MODEL', 'mistral:latest')
-                self.anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
-                self.claude_model = os.getenv('CLAUDE_MODEL', 'claude-3-5-sonnet-20241022')
+                self.ollama_model = os.getenv('OLLAMA_MODEL', 'mistral')
         
         return Config()
     
@@ -131,23 +104,12 @@ class SkynetLite:
         try:
             await self.loader_manager.initialize()
             
-            # Ensure the model is available (only if the method exists and takes the right parameters)
+            # Ensure the model is available
             if hasattr(self.loader_manager.loader, 'ensure_model_available'):
-                try:
-                    # Check method signature - some loaders might not take model name parameter
-                    import inspect
-                    sig = inspect.signature(self.loader_manager.loader.ensure_model_available)
-                    param_count = len(sig.parameters)
-                    
-                    if param_count > 1:  # Method takes model name parameter
-                        model_ready = await self.loader_manager.loader.ensure_model_available(self.config.ollama_model)
-                    else:  # Method takes no parameters
-                        model_ready = await self.loader_manager.loader.ensure_model_available()
-                    
-                    if not model_ready:
-                        logger.warning(f"Model {self.config.ollama_model} may not be ready, but continuing...")
-                except Exception as e:
-                    logger.warning(f"Could not verify model availability: {e}")
+                model_ready = await self.loader_manager.loader.ensure_model_available(self.config.ollama_model)
+                if not model_ready:
+                    logger.error(f"Failed to ensure model {self.config.ollama_model} is available")
+                    return False
             
             # Initialize search tool if API key is available
             if self.config.bing_api_key:
