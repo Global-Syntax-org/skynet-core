@@ -3,50 +3,129 @@
 Skynet Lite - Local AI Chatbot with Web Search
 A lightweight chatbot powered by Ollama + Mistral and Bing Search
 """
-
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import asyncio
-from typing import Optional
-import semantic_kernel as sk
+import logging
 
-from models.loader import OllamaModelLoader
-from tools.web_search import BingSearchTool
-from plugins.memory import ChatMemoryManager
-from config import Config
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("SkynetLite")
+
+
+class LoaderManager:
+    """Manages different model loaders with fallback support"""
+    
+    def __init__(self):
+        self.loader = None
+        self.model = None
+
+    async def initialize(self):
+        """Initialize the best available model loader"""
+        # Try Ollama first
+        try:
+            from loaders.ollama_loader import OllamaModelLoader
+            self.loader = OllamaModelLoader()
+            logger.info("Using OllamaModelLoader")
+        except (ModuleNotFoundError, ImportError):
+            logger.warning("OllamaModelLoader not available. Trying LocalModelLoader.")
+            try:
+                from loaders.local_loader import LocalModelLoader
+                self.loader = LocalModelLoader()
+                logger.info("Using LocalModelLoader")
+            except (ModuleNotFoundError, ImportError):
+                logger.error("No model loaders available. Aborting.")
+                raise RuntimeError("No compatible model loaders found")
+        
+        # Initialize the loader
+        if hasattr(self.loader, 'initialize'):
+            await self.loader.initialize()
+        
+        return True
+
+    async def shutdown(self):
+        """Clean up resources"""
+        if self.loader and hasattr(self.loader, 'close'):
+            await self.loader.close()
+
+
+class MemoryManager:
+    """Simple conversation memory management"""
+    
+    def __init__(self, max_history=10):
+        self.conversation_history = []
+        self.max_history = max_history
+    
+    def add_user_message(self, message: str):
+        self.conversation_history.append({"role": "user", "content": message})
+        self._trim_history()
+    
+    def add_assistant_message(self, message: str):
+        self.conversation_history.append({"role": "assistant", "content": message})
+        self._trim_history()
+    
+    def _trim_history(self):
+        if len(self.conversation_history) > self.max_history * 2:  # *2 for user+assistant pairs
+            self.conversation_history = self.conversation_history[-self.max_history * 2:]
+    
+    def get_conversation_history(self) -> str:
+        if not self.conversation_history:
+            return "No conversation history yet."
+        
+        history = []
+        for entry in self.conversation_history[-6:]:  # Last 3 exchanges
+            role = entry["role"].title()
+            content = entry["content"]
+            history.append(f"{role}: {content}")
+        
+        return "\n".join(history)
 
 
 class SkynetLite:
-    """Main Skynet Lite chatbot orchestrator"""
+    """Main chatbot class"""
     
     def __init__(self):
-        self.config = Config()
-        self.kernel = sk.Kernel()
-        self.model_loader = OllamaModelLoader()
-        self.search_tool = BingSearchTool(self.config.bing_api_key)
-        self.memory_manager = ChatMemoryManager()
+        self.loader_manager = LoaderManager()
+        self.memory_manager = MemoryManager()
+        self.search_tool = None
+        self.config = self._load_config()
+    
+    def _load_config(self):
+        """Load configuration (placeholder - implement based on your config system)"""
+        class Config:
+            def __init__(self):
+                self.bing_api_key = os.getenv('BING_API_KEY')
+                self.ollama_model = os.getenv('OLLAMA_MODEL', 'mistral')
         
+        return Config()
+    
     async def initialize(self) -> bool:
-        """Initialize the chatbot components"""
-        print("🚀 Initializing Skynet Lite...")
-        
-        # Check if Ollama model is available
-        if not await self.model_loader.ensure_model_available(self.config.ollama_model):
-            print("❌ Failed to initialize Ollama model")
+        """Initialize the chatbot"""
+        try:
+            await self.loader_manager.initialize()
+            
+            # Ensure the model is available
+            if hasattr(self.loader_manager.loader, 'ensure_model_available'):
+                model_ready = await self.loader_manager.loader.ensure_model_available(self.config.ollama_model)
+                if not model_ready:
+                    logger.error(f"Failed to ensure model {self.config.ollama_model} is available")
+                    return False
+            
+            # Initialize search tool if API key is available
+            if self.config.bing_api_key:
+                try:
+                    from tools.search_tool import SearchTool  # Assuming this exists
+                    self.search_tool = SearchTool(self.config.bing_api_key)
+                except ImportError:
+                    logger.warning("SearchTool not available. Web search disabled.")
+            
+            logger.info("Skynet Lite initialized successfully")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize Skynet Lite: {e}")
             return False
-        
-        print("🧠 Connecting to Ollama...")
-        
-        # Skip semantic-kernel Ollama connector to avoid version compatibility issues
-        # Use direct model_loader integration instead
-        
-        # Set up web search capabilities
-        if self.config.bing_api_key:
-            print("🔍 Bing Search ready")
-        else:
-            print("⚠️  No Bing API key found. Web search disabled.")
-        
-        print("✅ Skynet Lite ready for action!")
-        return True
-        
+    
     async def chat_loop(self) -> None:
         """Main chat interaction loop"""
         print("\n💬 Chat with Skynet Lite (type 'quit' to exit)")
@@ -81,15 +160,21 @@ class SkynetLite:
                 print("\n\n🤖 Goodbye! Skynet Lite signing off.")
                 break
             except Exception as e:
+                logger.error(f"Error in chat loop: {e}")
                 print(f"\n❌ Error: {e}")
-                
+    
     async def _needs_web_search(self, query: str) -> bool:
         """Determine if query needs web search based on keywords"""
+        if not self.search_tool:
+            return False
+        
         web_indicators = [
             "latest", "recent", "news", "current", "today", "now",
             "weather", "stock", "price", "update", "what's happening",
-            "breaking", "live", "trending", "market", "bitcoin"
+            "breaking", "live", "trending", "market", "bitcoin",
+            "search", "look up", "find information"
         ]
+        
         return any(indicator in query.lower() for indicator in web_indicators)
     
     async def _handle_web_search_query(self, query: str) -> str:
@@ -110,9 +195,10 @@ Search Results:
 
 Please provide a concise, accurate answer based on this information. Be specific and cite key facts from the search results."""
             
-            return await self.model_loader.generate_completion(full_prompt, self.config.ollama_model)
+            return await self._generate_completion(full_prompt)
             
         except Exception as e:
+            logger.error(f"Web search error: {e}")
             return f"Sorry, I encountered an error while searching: {str(e)}"
     
     async def _handle_local_query(self, query: str) -> str:
@@ -134,11 +220,45 @@ Assistant:"""
 User: {query}
 Assistant:"""
             
-            response = await self.model_loader.generate_completion(full_prompt, self.config.ollama_model)
+            response = await self._generate_completion(full_prompt)
             return response or "I'm having trouble generating a response right now. Please try again."
             
         except Exception as e:
+            logger.error(f"Local query error: {e}")
             return f"Sorry, I encountered an error: {str(e)}"
+    
+    async def _generate_completion(self, prompt: str) -> str:
+        """Generate completion using the loaded model"""
+        try:
+            loader = self.loader_manager.loader
+            
+            # Try different method names that might exist in your OllamaModelLoader
+            if hasattr(loader, 'generate_completion'):
+                return await loader.generate_completion(prompt, self.config.ollama_model)
+            elif hasattr(loader, 'generate'):
+                return await loader.generate(prompt)
+            elif hasattr(loader, 'chat'):
+                return await loader.chat(prompt)
+            elif hasattr(loader, 'complete'):
+                return await loader.complete(prompt)
+            elif hasattr(loader, 'query'):
+                return await loader.query(prompt)
+            elif hasattr(loader, 'ask'):
+                return await loader.ask(prompt)
+            else:
+                # Debug: Print available methods
+                available_methods = [method for method in dir(loader) if not method.startswith('_')]
+                logger.error(f"Available methods in loader: {available_methods}")
+                raise NotImplementedError(f"Model loader doesn't support text generation. Available methods: {available_methods}")
+        except Exception as e:
+            logger.error(f"Completion generation error: {e}")
+            raise
+    
+    async def shutdown(self):
+        """Clean up resources"""
+        await self.loader_manager.shutdown()
+        if self.search_tool and hasattr(self.search_tool, 'close'):
+            await self.search_tool.close()
 
 
 async def main() -> None:
@@ -153,15 +273,16 @@ async def main() -> None:
             print("🔧 Make sure Ollama is running: ollama serve")
             print("🔧 And ensure the model is available: ollama pull mistral")
     except Exception as e:
+        logger.error(f"Failed to start Skynet Lite: {e}")
         print(f"❌ Failed to start Skynet Lite: {e}")
         print("🔧 Make sure Ollama is running: ollama serve")
+        print("🔧 And ensure the model is available: ollama pull mistral")
     finally:
         # Clean up resources
         try:
-            await chatbot.model_loader.close()
-            await chatbot.search_tool.close()
+            await chatbot.shutdown()
         except Exception as cleanup_error:
-            print(f"⚠️  Warning during cleanup: {cleanup_error}")
+            logger.warning(f"Warning during cleanup: {cleanup_error}")
 
 
 if __name__ == "__main__":
