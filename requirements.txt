@@ -26,6 +26,9 @@ ollama>=0.1.7
 # Enhanced terminal output
 rich==13.7.1
 
+# Web UI framework
+flask>=3.0.0
+
 # CLI interface (future enhancement)
 click==8.1.7
 

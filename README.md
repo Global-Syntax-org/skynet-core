@@ -1,4 +1,13 @@
-# 🤖 Skynet Lite
+# 🤖## ✨ Features
+
+- **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model
+- **🔍 Web Search Integration** - DuckDuckGo by default, with optional Azure Search and Google Custom Search providers
+- **💾 Conversation Memory** - Persistent chat history and context management
+- **🌐 Web Interface** - Clean, responsive Flask-based web UI alongside console interface
+- **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
+- **🛡️ Privacy-First** - All AI processing happens locally on your machine
+- **🚀 Async Architecture** - High-performance async/await implementation
+- **🎯 Robotics Ready** - Designed for integration with ROS and Webotste
 
 A lightweight, local AI chatbot powered by Ollama and enhanced with web search capabilities. Built for robotics simulation, swarm intelligence, and general AI assistance with privacy-first local LLM execution.
 
@@ -40,8 +49,17 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
    ```
 
 4. **Launch Skynet Lite**
+   
+   **Console Interface:**
    ```bash
    python main.py
+   ```
+   
+   **Web Interface:**
+   ```bash
+   cd web
+   python run.py
+   # Open http://localhost:5000 in your browser
    ```
 
 ## 🏗️ Architecture
@@ -51,6 +69,11 @@ skynet-lite/
 ├── main.py              # Entry point and chat orchestration
 ├── config.py            # Configuration management
 ├── setup.py             # Setup and dependency verification
+├── web/                 # Web UI interface
+│   ├── app.py           # Flask web application
+│   ├── run.py           # Web UI launcher
+│   ├── templates/       # HTML templates
+│   └── static/          # CSS and static assets
 ├── models/
 │   └── loader.py        # Ollama model interface
 ├── tools/
@@ -171,10 +194,28 @@ python -m pytest tests/ --cov=. --cov-report=html
 
 - **semantic-kernel** - AI orchestration framework
 - **ollama** - Local LLM integration
+- **flask** - Web interface framework
 - **aiohttp/httpx** - Async HTTP clients
- - **beautifulsoup4 & lxml** - HTML parsing for DuckDuckGo scraping (if used)
+- **beautifulsoup4 & lxml** - HTML parsing for DuckDuckGo scraping (if used)
 - **pyyaml** - Configuration management
 - **rich** - Enhanced terminal output
+
+## 🔧 Troubleshooting
+
+### Web Interface Issues
+- **"Error: Sorry, I encountered an error"**: Ensure Ollama is running (`ollama serve`)
+- **Flask not found**: Run `pip install flask` or `pip install -r requirements.txt`
+- **Port 5000 in use**: Change the port in `web/app.py` line `app.run(port=5000)`
+
+### Search Issues  
+- **No search results**: Check your internet connection for DuckDuckGo
+- **Azure Search not working**: Verify `AZURE_SEARCH_KEY` and `AZURE_SEARCH_ENDPOINT`
+- **Google Search failing**: Ensure `GOOGLE_API_KEY` and `GOOGLE_CX` are set correctly
+
+### Model Issues
+- **Ollama connection failed**: Start Ollama with `ollama serve` and verify port 11434
+- **Model not found**: Pull the model with `ollama pull mistral`
+- **Slow responses**: Models run locally; performance depends on your hardware
 
 ## 🛠️ Development
 

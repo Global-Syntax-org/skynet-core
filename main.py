@@ -205,6 +205,30 @@ class SkynetLite:
             logger.error(f"Failed to initialize Skynet Lite: {e}")
             return False
     
+    async def chat(self, user_message: str) -> str:
+        """Process a single chat message and return response"""
+        try:
+            if not user_message.strip():
+                return "Please provide a message."
+            
+            # Add to memory
+            self.memory_manager.add_user_message(user_message)
+            
+            # Check if web search is needed
+            if await self._needs_web_search(user_message):
+                response = await self._handle_web_search_query(user_message)
+            else:
+                response = await self._handle_local_query(user_message)
+            
+            # Add response to memory
+            self.memory_manager.add_assistant_message(response)
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f"Error processing chat message: {e}")
+            return f"Sorry, I encountered an error: {str(e)}"
+    
     async def chat_loop(self) -> None:
         """Main chat interaction loop"""
         print("\n💬 Chat with Skynet Lite (type 'quit' to exit)")
