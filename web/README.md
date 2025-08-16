@@ -26,12 +26,12 @@ Simple Flask-based web interface for Skynet Lite.
 3. **Run the web interface**:
    ```bash
    cd web
-   python run.py
+   python3 run.py
    ```
    
    Or directly:
    ```bash
-   python app.py
+   python3 app.py
    ```
 
 4. **Open your browser**:
@@ -45,6 +45,8 @@ The web UI uses the same configuration as the main Skynet Lite application:
 
 - Environment variables (OLLAMA_BASE_URL, AZURE_SEARCH_KEY, etc.)
 - `config.yaml` file in the parent directory
+
+**Database**: User accounts and conversation history are stored in `web/skynet_lite.db`.
 
 ## API Endpoints
 

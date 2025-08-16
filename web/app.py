@@ -11,6 +11,35 @@ import asyncio
 import traceback
 import uuid
 import sqlite3
+import glob
+
+# If a local .venv exists in the project, add its site-packages to sys.path so
+# the app can be started with the system Python (without activating the venv).
+# This is a best-effort convenience for development; production should use a
+# properly activated environment or a process manager.
+try:
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    venv_root = os.path.join(project_root, '.venv')
+    if os.path.isdir(venv_root):
+        # Typical layouts:
+        #  - .venv/lib/pythonX.Y/site-packages
+        #  - .venv/lib64/pythonX.Y/site-packages
+        #  - .venv/lib/pythonX.Y/dist-packages
+        patterns = [
+            os.path.join(venv_root, 'lib', 'python*', 'site-packages'),
+            os.path.join(venv_root, 'lib64', 'python*', 'site-packages'),
+            os.path.join(venv_root, 'lib', 'python*', 'dist-packages'),
+        ]
+        for pat in patterns:
+            for p in glob.glob(pat):
+                if os.path.isdir(p) and p not in sys.path:
+                    sys.path.insert(0, p)
+        # Also ensure the venv's 'site-packages' is preferred for imports
+        # (no-op if already present)
+except Exception:
+    # Fail silently — we don't want startup to break if enrichment fails
+    pass
+
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, g
 from datetime import datetime
 
@@ -69,8 +98,23 @@ app = Flask(__name__)
 # Configure authentication and security
 configure_session_security(app)
 
-# Initialize authentication manager
-auth_manager = AuthManager()
+# Use a single, canonical SQLite database file inside the web/ directory
+DB_PATH = os.path.join(os.path.dirname(__file__), 'skynet_lite.db')
+
+
+# Initialize the database (ensure schema exists before creating AuthManager)
+def init_db():
+    """Initialize the SQLite database at the canonical DB_PATH."""
+    conn = sqlite3.connect(DB_PATH)
+    with open(os.path.join(os.path.dirname(__file__), 'schema.sql'), 'r') as f:
+        conn.executescript(f.read())
+    conn.close()
+
+
+init_db()
+
+# Initialize authentication manager using the same DB file
+auth_manager = AuthManager(db_path=DB_PATH)
 
 # Add CORS headers for development
 @app.after_request
@@ -343,22 +387,7 @@ def get_conversation_history():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
-@app.route('/api/forgot-password', methods=['POST'])
-def forgot_password():
-    """Handle password reset request"""
-    try:
-        data = request.get_json()
-        email = data.get('email', '').strip()
-        
-        if not email:
-            return jsonify({'success': False, 'error': 'Email is required'}), 400
-        
-        result = auth_manager.generate_reset_token(email)
-        return jsonify(result)
-        
-    except Exception as e:
-        print(f"Error in forgot password: {e}")
-        return jsonify({'success': False, 'error': 'Internal server error'}), 500
+# NOTE: 'forgot password' (request token) route removed; token generation is kept in AuthManager
 
 @app.route('/api/reset-password', methods=['POST'])
 def reset_password():
@@ -395,10 +424,7 @@ def verify_reset_token():
         print(f"Error in verify reset token: {e}")
         return jsonify({'success': False, 'error': 'Internal server error'}), 500
 
-@app.route('/forgot-password')
-def forgot_password_page():
-    """Render forgot password page"""
-    return render_template('forgot_password.html')
+# Forgot-password page removed; users should use the reset flow when appropriate
 
 @app.route('/reset-password')
 def reset_password_page():

@@ -13,7 +13,7 @@
             <p class="subtitle">Local AI Assistant with Web Search</p>
             <div class="header-buttons">
                 <button id="historyBtn" class="header-btn" onclick="toggleHistory()">History</button>
-                <button id="clearBtn" class="clear-btn" onclick="clearChat()">New Chat</button>
+                <button id="clearBtn" class="clear-btn" onclick="clearChat()">Clear</button>
                 <button id="logoutBtn" class="header-btn" onclick="logout()">Logout</button>
             </div>
         </header>
@@ -196,7 +196,7 @@
             }
         }
 
-        // New Chat function
+    // Clear Chat function
         async function clearChat() {
             console.log('🆕 Clear Chat triggered!');
             if (confirm('Start a new chat? This will clear the current conversation.')) {

@@ -52,7 +52,7 @@ This project adheres to a code of conduct that ensures a welcoming environment f
 
 1. **Create virtual environment**:
    ```bash
-   python -m venv .venv
+   python3 -m venv .venv
    source .venv/bin/activate  # Linux/Mac
    # or
    .venv\Scripts\activate     # Windows
@@ -470,7 +470,7 @@ if __name__ == "__main__":
 
 ```bash
 # Generate API documentation
-python -m pydoc -w skynet_lite
+python3 -m pydoc -w skynet_lite
 
 # Check documentation links
 pytest --doctest-modules skynet_lite/

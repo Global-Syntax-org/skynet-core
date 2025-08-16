@@ -17,7 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.4.1] - 2025-08-16
 
 ### Changed
-- Bumped project version to 1.4.1 and updated documentation.
+- Export tooling: SQL scripts and CLI exporter under `scripts/`
+- UI: "New Chat" button renamed to "Clear" for clarity
+- Database: Normalized DB path to use single `web/skynet_lite.db` file for all operations
+- Documentation: Removed duplicate sections from README
+- Removed public forgot-password route; reset token flow retained
+
+### Added
+- Conversation export tools with test harness
+- Robust SQL export with Python fallback when sqlite3 CLI unavailable
+
+### Fixed
+- File permissions: `scripts/` directory and executable files properly configured
+- Database path consistency: AuthManager and web app now use same DB file
 
 
 ## [1.2.0] - 2025-08-15

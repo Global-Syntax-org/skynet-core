@@ -1,0 +1,3 @@
+message_id,user_id,role,message,timestamp
+1,1,user,Hello from Alice,2025-08-16 10:00:00
+2,1,assistant,Hi Alice,2025-08-16 10:00:01

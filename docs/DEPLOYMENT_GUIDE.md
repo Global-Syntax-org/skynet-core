@@ -15,7 +15,7 @@
    ```bash
    git clone https://github.com/StuxnetStudios/skynet-lite.git
    cd skynet-lite
-   python setup.py  # Creates venv and installs dependencies
+   python3 setup.py  # Creates venv and installs dependencies
    ```
 
 2. **Configure Environment Variables**
@@ -179,7 +179,7 @@ git clone https://github.com/StuxnetStudios/skynet-lite.git
 cd skynet-lite
 
 # Setup development environment
-python setup.py
+python3 setup.py
 source .venv/bin/activate
 
 # Install development dependencies
@@ -192,11 +192,11 @@ ollama serve
 ollama pull mistral
 
 # Run console interface
-python main.py
+python3 main.py
 
 # OR run web interface
 cd web
-python run.py
+python3 run.py
 ```
 
 ### Development Dependencies
@@ -259,20 +259,20 @@ repos:
 
 ```bash
 # Run all tests
-python -m pytest tests/ -v
+python3 -m pytest tests/ -v
 
 # Run with coverage
-python -m pytest tests/ --cov=. --cov-report=html
+python3 -m pytest tests/ --cov=. --cov-report=html
 
 # Test specific components
-python test_components.py
-python test_ollama.py
-python test_ddg_search.py
+python3 test_components.py
+python3 test_ollama.py
+python3 test_ddg_search.py
 
 # Test web interface
 cd web
-python test_web.py
-python diagnose.py
+python3 test_web.py
+python3 diagnose.py
 ```
 
 ### Hot Reload Development
@@ -281,10 +281,10 @@ python diagnose.py
 # Web interface with auto-reload
 cd web
 export FLASK_ENV=development
-python app.py
+python3 app.py
 
 # Console with file watching (using entr)
-find . -name "*.py" | entr -r python main.py
+find . -name "*.py" | entr -r python3 main.py
 ```
 
 ## Monitoring and Logging
@@ -400,12 +400,12 @@ Key metrics to monitor:
 export SKYNET_DEBUG=true
 
 # Run with verbose output
-python main.py --verbose
+python3 main.py --verbose
 
 # Web interface debug mode
 export FLASK_ENV=development
 cd web
-python app.py
+python3 app.py
 ```
 
 ## Backup and Recovery

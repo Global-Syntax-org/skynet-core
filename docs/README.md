@@ -90,23 +90,16 @@ Welcome to the Skynet Lite documentation! This index helps you find the right do
 
 **Console Interface:**
 ```bash
-# Start console chat
-python main.py
-
-# Exit commands
-quit / exit / bye
+python3 main.py
 ```
 
 **Web Interface:**
 ```bash
-# Start web server
-cd web && python run.py
-
-# Alternative startup
-cd web && python app.py
-
-# Open in browser
-http://localhost:5000
+cd web && python3 run.py
+```
+Or:
+```bash
+cd web && python3 app.py
 ```
 
 **Testing:**
@@ -115,10 +108,10 @@ http://localhost:5000
 pytest
 
 # Test core functionality
-python test_components.py
+python3 test_components.py
 
 # Test web interface
-cd web && python diagnose.py
+cd web && python3 diagnose.py
 ```
 
 ### Configuration Files

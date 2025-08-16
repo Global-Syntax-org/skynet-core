@@ -1,6 +1,12 @@
-# 🤖## ✨ Features
+# 🤖 Skynet Lite
 
-- **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model  
+- **Current Version**: 1.4.1
+
+A lightweight, local AI chatbot powered by Ollama and enhanced with web search capabilities. Built for robotics simulation, swarm intelligence, and general AI assistance with privacy-first local LLM execution.
+
+## ✨ Features
+
+- **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model
 - **🔍 Web Search Integration** - DuckDuckGo by default, with optional Azure Search and Google Custom Search providers
 - **💾 Conversation Memory** - Persistent chat history and context management
 - **🌐 Web Interface** - Clean, responsive Flask-based web UI alongside console interface
@@ -9,20 +15,7 @@
 - **🚀 Async Architecture** - High-performance async/await implementation
 - **🎯 Robotics Ready** - Designed for integration with ROS and Webots
 - **🔄 Multi-Model Support** - Fallback support for OpenAI, Claude, Gemini, and GitHub Copilot
-- **🛠️ Development Tools** - Diagnostic utilities and test scripts includedte
-
-A lightweight, local AI chatbot powered by Ollama and enhanced with web search capabilities. Built for robotics simulation, swarm intelligence, and general AI assistance with privacy-first local LLM execution.
-
-## ✨ Features
-
-- **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model
-- **🔍 Web Search Integration** - DDG Search for real-time information
-- **� Web Search Integration** - DuckDuckGo by default, with optional Azure Search and Google Custom Search providers
-- **�💾 Conversation Memory** - Persistent chat history and context management
-- **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
-- **🛡️ Privacy-First** - All AI processing happens locally on your machine
-- **🚀 Async Architecture** - High-performance async/await implementation
-- **🎯 Robotics Ready** - Designed for integration with ROS and Webots
+- **🛠️ Development Tools** - Diagnostic utilities and test scripts included
 
 ## 🚀 Quick Start
 
@@ -41,7 +34,7 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
 
 2. **Run the setup script**
    ```bash
-   python setup.py
+   python3 setup.py
    ```
    This will:
    - Create a virtual environment
@@ -58,20 +51,20 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
    
    **Console Interface:**
    ```bash
-   python main.py
+   python3 main.py
    ```
    
    **Web Interface:**
    ```bash
    cd web
-   python run.py
+   python3 run.py
    # Open http://localhost:5000 in your browser
    ```
    
    **Alternative web startup:**
    ```bash
    cd web
-   python app.py
+   python3 app.py
    ```
 
 ## 🏗️ Architecture
@@ -194,32 +187,32 @@ class SkynetController(Robot):
 
 Run the test suite:
 ```bash
-python -m pytest tests/ -v
+python3 -m pytest tests/ -v
 ```
 
 Test specific components:
 ```bash
 # Test core functionality
-python test_components.py
+python3 test_components.py
 
 # Test Ollama integration
-python test_ollama.py
+python3 test_ollama.py
 
 # Test web search
-python test_ddg_search.py
+python3 test_ddg_search.py
 
 # Test web interface
 cd web
-python test_web.py
+python3 test_web.py
 
 # Run diagnostics
 cd web
-python diagnose.py
+python3 diagnose.py
 ```
 
 Run with coverage:
 ```bash
-python -m pytest tests/ --cov=. --cov-report=html
+python3 -m pytest tests/ --cov=. --cov-report=html
 ```
 
 ## 📦 Dependencies

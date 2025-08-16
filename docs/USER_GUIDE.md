@@ -22,7 +22,7 @@ Skynet Lite is a privacy-first AI assistant that runs entirely on your local mac
    ```bash
    git clone https://github.com/StuxnetStudios/skynet-lite.git
    cd skynet-lite
-   python setup.py
+   python3 setup.py
    ```
 
 2. **Install Ollama** (the local AI engine)
@@ -50,13 +50,13 @@ Skynet Lite is a privacy-first AI assistant that runs entirely on your local mac
    **Web Interface (Recommended):**
    ```bash
    cd web
-   python run.py
+   python3 run.py
    ```
    Then open http://localhost:5000 in your browser
    
    **Console Interface:**
    ```bash
-   python main.py
+   python3 main.py
    ```
 
 ## Using the Web Interface
@@ -156,7 +156,7 @@ Currently, conversations are stored in browser session. For persistent storage:
 
 ```bash
 cd skynet-lite
-python main.py
+python3 main.py
 ```
 
 ### Console Commands
@@ -232,7 +232,7 @@ ollama pull mixtral        # Mixture of experts
 **Switch models by editing config:**
 ```bash
 export OLLAMA_MODEL=codellama
-python main.py
+python3 main.py
 ```
 
 ### Using Cloud APIs (Optional)
@@ -371,11 +371,11 @@ You: Can you give me a more detailed explanation?
 #### Check System Status
 ```bash
 # Test core functionality
-python test_components.py
+python3 test_components.py
 
 # Test web interface
 cd web
-python diagnose.py
+python3 diagnose.py
 
 # Check Ollama
 curl http://localhost:11434/api/version
@@ -384,12 +384,12 @@ curl http://localhost:11434/api/version
 #### Debug Mode
 ```bash
 # Console with debug info
-python main.py --verbose
+python3 main.py --verbose
 
 # Web interface debug
 export FLASK_ENV=development
 cd web
-python app.py
+python3 app.py
 ```
 
 #### Log Files
