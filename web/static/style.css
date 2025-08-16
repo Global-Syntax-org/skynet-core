@@ -46,9 +46,8 @@ body {
 }
 
 .clear-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+    /* Positioning is handled by the container (.header-buttons) so buttons stack cleanly */
+    position: relative;
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -57,6 +56,46 @@ body {
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.2s ease;
+}
+
+/* Header buttons container (top-right) */
+.header-buttons {
+    position: absolute;
+    top: 1rem;
+    /* align to the right side of the header */
+    right: 1rem;
+    left: auto;
+    transform: none;
+    display: flex;
+    flex-direction: column; /* stack vertically */
+    gap: 8px;
+    align-items: flex-end; /* align buttons to the right edge */
+    z-index: 20;
+}
+
+/* Compact header buttons to avoid large vertical footprint */
+.header-buttons button,
+.header-buttons .clear-btn,
+.header-buttons .header-btn {
+    /* Uniform rectangular buttons that stack vertically (not square) */
+    height: 34px; /* uniform height (trimmed 2px) */
+    min-width: 94px; /* baseline width trimmed 2px */
+    padding: 0 10px; /* horizontal padding for label breathing room */
+    font-size: 0.9rem;
+    line-height: 1;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    opacity: 0.98;
+    white-space: nowrap;
+}
+
+/* Make the middle button (New Chat / clear) visually consistent */
+.header-buttons .clear-btn {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.18);
 }
 
 .clear-btn:hover {
@@ -199,6 +238,22 @@ body {
     border-top: 1px solid #e0e0e0;
 }
 
+/* Adjust button layout to prevent overlap */
+button {
+    margin-right: 10px;
+}
+
+#top-right-buttons {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: flex-end;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .container {
@@ -259,4 +314,223 @@ body {
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
     background: #a1a1a1;
+}
+
+/* Authentication and Header Button Styles */
+.header-buttons {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.header-btn, .clear-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.header-btn:hover, .clear-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* History Panel Styles */
+.history-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+}
+
+.history-header h3 {
+    margin: 0;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.history-messages {
+    padding: 1rem 1.5rem;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.history-message {
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.history-message .message-content {
+    max-width: 100%;
+    font-size: 0.9rem;
+}
+
+/* Login/Register Page Styles */
+.auth-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.auth-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.875rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.auth-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.auth-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.auth-toggle {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #666;
+}
+
+.auth-toggle button {
+    background: none;
+    border: none;
+    color: #667eea;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.privacy-notice {
+    background: #f0f8f0;
+    border: 1px solid #d4e6d4;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    color: #2d5a2d;
+}
+
+.privacy-notice h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1a3a1a;
+}
+
+.error-message {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #c33;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.success-message {
+    background: #efe;
+    border: 1px solid #cfc;
+    color: #3c3;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
 }

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Skynet Lite</title>
+    <link rel="stylesheet" href="/static/style.css?v=1.3">
+    <style>
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            padding: 0.875rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-group.optional {
+            opacity: 0.8;
+        }
+        
+        .form-group.optional label::after {
+            content: " (optional)";
+            font-weight: normal;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .auth-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .auth-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .auth-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1rem;
+            color: #666;
+        }
+        
+        .auth-toggle a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-toggle a:hover {
+            text-decoration: underline;
+        }
+        
+        .privacy-notice {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .privacy-notice h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .success-message {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #363;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🤖 Skynet Lite</h1>
+            <p class="subtitle">Privacy-First AI Assistant</p>
+        </header>
+
+        <div class="auth-container">
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2>Sign In</h2>
+                <p>Access your private AI assistant and conversation history.</p>
+                
+                <form class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" required minlength="3">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required minlength="6">
+                    </div>
+                    
+                    <button type="submit" class="auth-button" id="loginButton">
+                        <span id="loginText">Sign In</span>
+                        <span id="loginLoading" style="display: none;">Signing in...</span>
+                    </button>
+                </form>
+                
+                <div class="auth-toggle">
+                    <a href="/forgot-password">Forgot Password?</a>
+                </div>
+                
+                <div class="auth-toggle">
+                    Don't have an account? <a href="#" onclick="showRegisterForm()">Create one</a>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div id="registerForm" style="display: none;">
+                <h2>Create Account</h2>
+                
+                <div class="privacy-notice">
+                    <h4>🛡️ Privacy First</h4>
+                    <p>We collect only the minimum information needed:</p>
+                    <ul>
+                        <li><strong>Username:</strong> For your account identification</li>
+                        <li><strong>Password:</strong> Securely hashed, never stored in plain text</li>
+                        <li><strong>Email:</strong> Optional, only for account recovery</li>
+                    </ul>
+                    <p>All conversations stay on this device. No data is sold or shared.</p>
+                </div>
+                
+                <form class="auth-form" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="registerUsername">Username</label>
+                        <input type="text" id="registerUsername" required minlength="3" 
+                               placeholder="Choose a unique username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" required minlength="6"
+                               placeholder="At least 6 characters">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" required minlength="6"
+                               placeholder="Re-enter your password">
+                    </div>
+                    
+                    <div class="form-group optional">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" 
+                               placeholder="For account recovery only">
+                    </div>
+                    
+                    <button type="submit" class="auth-button" id="registerButton">
+                        <span id="registerText">Create Account</span>
+                        <span id="registerLoading" style="display: none;">Creating account...</span>
+                    </button>
+                </form>
+                
+                <div class="auth-toggle">
+                    <a href="/forgot-password">Forgot Password?</a>
+                </div>
+                
+                <div class="auth-toggle">
+                    Already have an account? <a href="#" onclick="showLoginForm()">Sign in</a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>🔒 Your conversations are stored locally and privately</p>
+        </footer>
+    </div>
+
+    <script>
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // Hide success message
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            
+            // Hide error message
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+        
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function showLoginForm() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+            hideMessages();
+        }
+        
+        function showRegisterForm() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            hideMessages();
+        }
+        
+        function setLoading(formType, isLoading) {
+            const button = document.getElementById(formType + 'Button');
+            const text = document.getElementById(formType + 'Text');
+            const loading = document.getElementById(formType + 'Loading');
+            
+            button.disabled = isLoading;
+            text.style.display = isLoading ? 'none' : 'inline';
+            loading.style.display = isLoading ? 'inline' : 'none';
+        }
+        
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            setLoading('login', true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    showError(data.error || 'Login failed');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                setLoading('login', false);
+            }
+        }
+        
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const email = document.getElementById('registerEmail').value || null;
+            
+            // Client-side validation
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            setLoading('register', true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password, email })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showSuccess('Account created successfully! You can now sign in.');
+                    setTimeout(() => {
+                        showLoginForm();
+                        document.getElementById('loginUsername').value = username;
+                    }, 1500);
+                } else {
+                    showError(data.error || 'Registration failed');
+                }
+            } catch (error) {
+                showError('Network error. Please try again.');
+            } finally {
+                setLoading('register', false);
+            }
+        }
+        
+        // Auto-focus first input
+        document.getElementById('loginUsername').focus();
+    </script>
+</body>
+</html>

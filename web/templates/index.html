@@ -11,10 +11,24 @@
         <header class="header">
             <h1>🤖 Skynet Lite</h1>
             <p class="subtitle">Local AI Assistant with Web Search</p>
-            <button id="clearBtn" class="clear-btn" onclick="console.log('🆕 New Chat button onclick - ID:', this.id);">New Chat</button>
+            <div class="header-buttons">
+                <button id="historyBtn" class="header-btn" onclick="toggleHistory()">History</button>
+                <button id="clearBtn" class="clear-btn" onclick="clearChat()">New Chat</button>
+                <button id="logoutBtn" class="header-btn" onclick="logout()">Logout</button>
+            </div>
         </header>
 
         <div class="chat-container">
+            <div id="historyPanel" class="history-panel" style="display: none;">
+                <div class="history-header">
+                    <h3>Conversation History</h3>
+                    <button onclick="toggleHistory()" class="close-btn">×</button>
+                </div>
+                <div id="historyMessages" class="history-messages">
+                    <!-- History will be loaded here -->
+                </div>
+            </div>
+            
             <div id="chatMessages" class="chat-messages">
                 <div class="message bot-message">
                     <div class="message-content">
@@ -182,27 +196,121 @@
             }
         }
 
-        // New Chat (replaces previous Clear button)
-        console.log('🔴 Setting up New Chat button event listener');
-        clearBtn.addEventListener('click', async () => {
-            console.log('🆕 NEW CHAT BUTTON EVENT HANDLER TRIGGERED!');
+        // New Chat function
+        async function clearChat() {
+            console.log('🆕 Clear Chat triggered!');
             if (confirm('Start a new chat? This will clear the current conversation.')) {
                 try {
-                    await fetch('/clear', { method: 'POST' });
-                    chatMessages.innerHTML = `
-                        <div class="message bot-message">
-                            <div class="message-content">
-                                <strong>🤖 Skynet:</strong> Chat cleared! Ready for a new conversation.
+                    const response = await fetch('/clear', { method: 'POST' });
+                    if (response.ok) {
+                        chatMessages.innerHTML = `
+                            <div class="message bot-message">
+                                <div class="message-content">
+                                    <strong>🤖 Skynet:</strong> Chat cleared! Ready for a new conversation.
+                                </div>
+                                <div class="message-time">${new Date().toLocaleTimeString()}</div>
                             </div>
-                            <div class="message-time">${new Date().toLocaleTimeString()}</div>
-                        </div>
-                    `;
-                    messageInput.value = '';
-                    messageInput.focus();
+                        `;
+                        messageInput.value = '';
+                        messageInput.focus();
+                    }
                 } catch (error) {
-                    console.error('New chat error:', error);
+                    console.error('Clear chat error:', error);
                 }
             }
+        }
+
+        // Logout function
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                try {
+                    await fetch('/api/logout', { method: 'POST' });
+                    window.location.href = '/login';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    window.location.href = '/login';
+                }
+            }
+        }
+
+        // Toggle history panel
+        let historyVisible = false;
+        async function toggleHistory() {
+            const historyPanel = document.getElementById('historyPanel');
+            const historyMessages = document.getElementById('historyMessages');
+            
+            if (!historyVisible) {
+                // Load and show history
+                try {
+                    const response = await fetch('/api/history');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            displayHistory(data.history);
+                            historyPanel.style.display = 'block';
+                            historyVisible = true;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to load history:', error);
+                }
+            } else {
+                // Hide history
+                historyPanel.style.display = 'none';
+                historyVisible = false;
+            }
+        }
+
+        // Display conversation history
+        function displayHistory(history) {
+            const historyMessages = document.getElementById('historyMessages');
+            historyMessages.innerHTML = '';
+            
+            if (!history || history.length === 0) {
+                historyMessages.innerHTML = '<p style="text-align: center; color: #666;">No conversation history yet.</p>';
+                return;
+            }
+            
+            history.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `history-message ${msg.type}-message`;
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = 'message-content';
+                
+                if (msg.type === 'user') {
+                    messageContent.innerHTML = `<strong>👤 You:</strong> ${escapeHtml(msg.content)}`;
+                } else {
+                    messageContent.innerHTML = `<strong>🤖 Skynet:</strong> ${formatBotMessage(msg.content)}`;
+                }
+                
+                const messageTime = document.createElement('div');
+                messageTime.className = 'message-time';
+                messageTime.textContent = new Date(msg.timestamp).toLocaleTimeString();
+                
+                messageDiv.appendChild(messageContent);
+                messageDiv.appendChild(messageTime);
+                historyMessages.appendChild(messageDiv);
+            });
+        }
+
+        // Load initial welcome message
+        function loadWelcomeMessage() {
+            chatMessages.innerHTML = `
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <strong>🤖 Skynet:</strong> Hello! I'm your local AI assistant. I can help with questions, research topics using web search, and much more. What would you like to know?
+                    </div>
+                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                </div>
+            `;
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🟢 JavaScript started loading...');
+            loadWelcomeMessage();
+            messageInput.focus();
         });
 
         function addMessage(content, type, timestamp) {

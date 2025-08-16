@@ -1,21 +1,26 @@
 #!/usr/bin/env python3
 """
-Skynet Lite Web Interface
-Simple Flask web UI for chatting with Skynet Lite
+Skynet Lite Web Interface with Privacy-First Authentication
+Simple Flask web UI for chatting with Skynet Lite including user accounts
 """
 
 import sys
 import os
 import time
 import asyncio
-from flask import Flask, render_template, request, jsonify, session
-from datetime import datetime
+import traceback
 import uuid
+import sqlite3
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, g
+from datetime import datetime
 
 # Add parent directory to path so we can import skynet modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add current directory to path for local imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from main import SkynetLite
+from auth import AuthManager, login_required, optional_auth, configure_session_security
 from concurrent.futures import ThreadPoolExecutor
 
 # Background asyncio loop and executor for running Skynet coroutines
@@ -60,7 +65,12 @@ def ensure_background_loop():
     return loop
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+
+# Configure authentication and security
+configure_session_security(app)
+
+# Initialize authentication manager
+auth_manager = AuthManager()
 
 # Add CORS headers for development
 @app.after_request
@@ -69,6 +79,11 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     return response
+
+# Make auth manager available to all requests
+@app.before_request
+def before_request():
+    g.auth_manager = auth_manager
 
 # Global skynet instance
 skynet = None
@@ -127,12 +142,97 @@ async def init_skynet():
     return skynet
 
 @app.route('/')
+@optional_auth
 def index():
-    """Render the main chat interface."""
+    """Render the main chat interface or login page."""
+    if not g.current_user:
+        return redirect(url_for('login_page'))
+    
     timestamp = int(time.time())  # Unix timestamp for cache busting
-    return render_template('index.html', timestamp=timestamp)
+    return render_template('index.html', 
+                         timestamp=timestamp, 
+                         username=g.current_user.username)
+
+@app.route('/login')
+def login_page():
+    """Render the login/registration page."""
+    return render_template('login.html')
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    """Handle user registration"""
+    try:
+        data = request.get_json()
+        if not data:
+            raise ValueError("Invalid JSON payload")
+        
+        username = data.get('username', '').strip()
+        password = data.get('password', '')
+        print(f"📩 Registration payload: {data}")
+        email = data.get('email', '')
+        email = email.strip() if isinstance(email, str) else None
+        print(f"📩 Processed email: {email}")
+        
+        result = auth_manager.create_user(username, password, email)
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Registration error: {str(e)}'}), 500
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    """Handle user login"""
+    try:
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        password = data.get('password', '')
+        
+        result = auth_manager.authenticate_user(username, password)
+        
+        if result['success']:
+            # Set session
+            user = result['user']
+            session['user_id'] = user.id
+            session['username'] = user.username
+            session.permanent = True
+            
+            return jsonify({
+                'success': True,
+                'message': 'Login successful',
+                'user': {
+                    'id': user.id,
+                    'username': user.username
+                }
+            })
+        else:
+            return jsonify(result)
+            
+    except Exception as e:
+        return jsonify({'success': False, 'error': f'Login error: {str(e)}'}), 500
+
+@app.route('/api/logout', methods=['POST'])
+@login_required
+def logout():
+    """Handle user logout"""
+    session.clear()
+    return jsonify({'success': True, 'message': 'Logged out successfully'})
+
+@app.route('/api/user', methods=['GET'])
+@login_required
+def get_user():
+    """Get current user info"""
+    return jsonify({
+        'success': True,
+        'user': {
+            'id': g.current_user.id,
+            'username': g.current_user.username,
+            'email': g.current_user.email,
+            'created_at': g.current_user.created_at.isoformat() if g.current_user.created_at else None
+        }
+    })
 
 @app.route('/chat', methods=['POST'])
+@login_required
 def chat():
     """Handle chat messages"""
     try:
@@ -182,9 +282,13 @@ def chat():
             try:
                 chat_future = asyncio.run_coroutine_threadsafe(skynet_instance.chat(user_message), loop)
                 response = chat_future.result(timeout=120)
+                
+                # Save conversation to user's history
+                auth_manager.save_conversation_message(g.current_user.id, 'user', user_message)
+                auth_manager.save_conversation_message(g.current_user.id, 'assistant', response)
+                
             except Exception as e:
                 print(f"⚠️ Chat invocation raised: {e}")
-                import traceback
                 traceback.print_exc()
                 msg = str(e)
                 if 'Event loop is closed' in msg or 'closed' in msg.lower():
@@ -196,9 +300,13 @@ def chat():
                             raise Exception('Failed to reinitialize after loop-closed')
                         chat_future = asyncio.run_coroutine_threadsafe(skynet_instance.chat(user_message), loop)
                         response = chat_future.result(timeout=120)
+                        
+                        # Save conversation to user's history
+                        auth_manager.save_conversation_message(g.current_user.id, 'user', user_message)
+                        auth_manager.save_conversation_message(g.current_user.id, 'assistant', response)
+                        
                     except Exception as e2:
                         print(f"❌ Retry after reinit failed: {e2}")
-                        import traceback
                         traceback.print_exc()
                         return jsonify({'response': f'Sorry, I encountered an error: {str(e2)}'}), 200
                 else:
@@ -207,20 +315,92 @@ def chat():
             return jsonify({
                 'response': response,
                 'timestamp': datetime.now().isoformat(),
-                'session_id': session.get('session_id')
+                'user_id': g.current_user.id
             })
 
         except Exception as e:
             print(f"💥 Error in async processing: {e}")
-            import traceback
             traceback.print_exc()
             return jsonify({'error': f'Processing error: {str(e)}'}), 500
             
     except Exception as e:
         print(f"💥 Error in chat endpoint: {e}")
-        import traceback
         traceback.print_exc()
         return jsonify({'error': f'Internal error: {str(e)}'}), 500
+
+@app.route('/api/history', methods=['GET'])
+@login_required
+def get_conversation_history():
+    """Get user's conversation history"""
+    try:
+        limit = request.args.get('limit', 20, type=int)
+        history = auth_manager.get_user_conversation_history(g.current_user.id, limit)
+        return jsonify({'success': True, 'history': history})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/forgot-password', methods=['POST'])
+def forgot_password():
+    """Handle password reset request"""
+    try:
+        data = request.get_json()
+        email = data.get('email', '').strip()
+        
+        if not email:
+            return jsonify({'success': False, 'error': 'Email is required'}), 400
+        
+        result = auth_manager.generate_reset_token(email)
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"Error in forgot password: {e}")
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
+
+@app.route('/api/reset-password', methods=['POST'])
+def reset_password():
+    """Handle password reset with token"""
+    try:
+        data = request.get_json()
+        token = data.get('token', '').strip()
+        new_password = data.get('password', '').strip()
+        
+        if not token or not new_password:
+            return jsonify({'success': False, 'error': 'Token and password are required'}), 400
+        
+        result = auth_manager.reset_password(token, new_password)
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"Error in reset password: {e}")
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
+
+@app.route('/api/verify-reset-token', methods=['POST'])
+def verify_reset_token():
+    """Verify if a reset token is valid"""
+    try:
+        data = request.get_json()
+        token = data.get('token', '').strip()
+        
+        if not token:
+            return jsonify({'success': False, 'error': 'Token is required'}), 400
+        
+        result = auth_manager.verify_reset_token(token)
+        return jsonify(result)
+        
+    except Exception as e:
+        print(f"Error in verify reset token: {e}")
+        return jsonify({'success': False, 'error': 'Internal server error'}), 500
+
+@app.route('/forgot-password')
+def forgot_password_page():
+    """Render forgot password page"""
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password')
+def reset_password_page():
+    """Render reset password page"""
+    token = request.args.get('token', '')
+    return render_template('reset_password.html', token=token)
 
 @app.route('/health')
 def health():
@@ -228,93 +408,46 @@ def health():
     return jsonify({'status': 'ok', 'service': 'skynet-lite-web'})
 
 @app.route('/clear', methods=['POST'])
+@login_required
 def clear_session():
-    """Clear chat session"""
-    global skynet
-    session.clear()
-    new_id = str(uuid.uuid4())
-    session['session_id'] = new_id
-    print(f"🔁 Clearing session and starting new session: {new_id}")
-    
-    # Force complete Skynet instance reset - this ensures no memory carries over
+    """Clear user's conversation history"""
     try:
-        if skynet:
-            print("🔄 Forcing complete Skynet instance reset...")
-            # Try to shutdown current instance cleanly
-            try:
-                import asyncio
-                loop = ensure_background_loop()
-                shutdown_future = asyncio.run_coroutine_threadsafe(skynet.shutdown(), loop)
-                shutdown_future.result(timeout=5)
-                print("✅ Current Skynet instance shut down cleanly")
-            except Exception as e:
-                print(f"⚠️ Error during Skynet shutdown: {e}")
-            
-            # Clear memory manager if it exists
-            if hasattr(skynet, 'memory_manager') and skynet.memory_manager:
-                mm = skynet.memory_manager
-                print(f"🧠 Clearing memory for manager type: {type(mm)}")
-                
-                # Prefer clear_history() when available
-                if hasattr(mm, 'clear_history') and callable(mm.clear_history):
-                    try:
-                        mm.clear_history()
-                        print("🧹 Called clear_history() on memory manager")
-                    except Exception as e:
-                        print(f"⚠️ clear_history() raised: {e}")
-                
-                # Fallback: directly clear conversation_history list
-                if hasattr(mm, 'conversation_history'):
-                    try:
-                        mm.conversation_history = []
-                        print("🧹 Cleared conversation_history attribute on memory manager")
-                    except Exception as e:
-                        print(f"⚠️ Failed to clear conversation_history attribute: {e}")
-
-                # If memory manager saves to a file, try to remove or overwrite it
-                try:
-                    mem_file = None
-                    # Check common locations: attribute or env var
-                    if hasattr(mm, 'memory_file'):
-                        mem_file = getattr(mm, 'memory_file')
-                    import os
-                    if not mem_file:
-                        mem_file = os.environ.get('MEMORY_FILE')
-                    if not mem_file:
-                        # Check for default files in workspace
-                        possible_files = ['conversation_history.json', 'memory.json', 'chat_history.json']
-                        for pf in possible_files:
-                            if os.path.exists(pf):
-                                mem_file = pf
-                                break
-                    
-                    if mem_file:
-                        # Only delete if file exists in workspace or absolute path
-                        if os.path.isabs(mem_file):
-                            path_to_check = mem_file
-                        else:
-                            path_to_check = os.path.join(os.getcwd(), mem_file)
-                        if os.path.exists(path_to_check):
-                            try:
-                                os.remove(path_to_check)
-                                print(f"🗑️ Removed persisted memory file: {path_to_check}")
-                            except Exception as e:
-                                print(f"⚠️ Failed to remove memory file {path_to_check}: {e}")
-                        else:
-                            print(f"ℹ️ Memory file not found at: {path_to_check}")
-                    else:
-                        print("ℹ️ No memory files found to remove")
-                except Exception as e:
-                    print(f"⚠️ Error while handling persisted memory file: {e}")
-            
-            # Force skynet instance to None - next request will create fresh instance
-            skynet = None
-            print("♻️ Skynet instance cleared - next request will create fresh instance")
-            
+        # Clear user's conversation history from database
+        auth_manager.clear_user_conversation_history(g.current_user.id)
+        
+        return jsonify({
+            'status': 'cleared', 
+            'user_id': g.current_user.id,
+            'message': 'Conversation history cleared'
+        })
+        
     except Exception as e:
-        print(f"⚠️ Failed to clear Skynet memory: {e}")
+        print(f"⚠️ Failed to clear conversation history: {e}")
+        return jsonify({'error': 'Failed to clear history'}), 500
 
-    return jsonify({'status': 'cleared', 'session_id': new_id})
+@app.route('/api/user/profile', methods=['GET'])
+@login_required  
+def get_user_profile():
+    """Get current user profile"""
+    user = g.current_user
+    return jsonify({
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+        'created_at': user.created_at.isoformat(),
+        'message_count': auth_manager.get_user_message_count(user.id)
+    })
+
+def init_db():
+    """Initialize the SQLite database."""
+    db_path = os.path.join(os.path.dirname(__file__), 'skynet_lite.db')
+    conn = sqlite3.connect(db_path)
+    with open(os.path.join(os.path.dirname(__file__), 'schema.sql'), 'r') as f:
+        conn.executescript(f.read())
+    conn.close()
+
+# Initialize the database
+init_db()
 
 if __name__ == '__main__':
     print("🌐 Starting Skynet Lite Web Interface...")

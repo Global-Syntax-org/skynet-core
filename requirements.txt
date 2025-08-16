@@ -29,6 +29,9 @@ rich==13.7.1
 # Web UI framework
 flask>=3.0.0
 
+# Password hashing for authentication
+bcrypt>=4.0.1
+
 # CLI interface (future enhancement)
 click==8.1.7
 
