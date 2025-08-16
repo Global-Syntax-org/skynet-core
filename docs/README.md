@@ -174,6 +174,7 @@ cd web && python diagnose.py
 ## Release Information
 
 - **Current Version**: 1.2.0
+- **Current Version**: 1.4.1
 - **Latest Release**: [Changelog](docs/CHANGELOG.md#120---2025-08-15)
 - **Roadmap**: [Future Plans](README.md#roadmap)
 - **Version History**: [Complete Changelog](docs/CHANGELOG.md)
