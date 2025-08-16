@@ -218,13 +218,22 @@ class AuthManager:
         """Get user's conversation history"""
         try:
             with sqlite3.connect(self.db_path) as conn:
-                cursor = conn.execute("""
-                    SELECT message_type, content, timestamp 
-                    FROM user_conversations 
-                    WHERE user_id = ? 
-                    ORDER BY timestamp DESC 
-                    LIMIT ?
-                """, (user_id, limit))
+                if limit and limit > 0:
+                    cursor = conn.execute("""
+                        SELECT message_type, content, timestamp 
+                        FROM user_conversations 
+                        WHERE user_id = ? 
+                        ORDER BY timestamp DESC 
+                        LIMIT ?
+                    """, (user_id, limit))
+                else:
+                    # limit == 0 or falsy => return all history
+                    cursor = conn.execute("""
+                        SELECT message_type, content, timestamp 
+                        FROM user_conversations 
+                        WHERE user_id = ? 
+                        ORDER BY timestamp DESC
+                    """, (user_id,))
                 
                 messages = []
                 for message_type, content, timestamp in cursor.fetchall():
@@ -245,7 +254,8 @@ class AuthManager:
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
-            cursor.execute("DELETE FROM conversations WHERE user_id = ?", (user_id,))
+            # Table name is `user_conversations` (not `conversations`) — delete user's rows
+            cursor.execute("DELETE FROM user_conversations WHERE user_id = ?", (user_id,))
             conn.commit()
             conn.close()
             return True
@@ -258,7 +268,8 @@ class AuthManager:
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM conversations WHERE user_id = ?", (user_id,))
+            # Count messages from the user_conversations table
+            cursor.execute("SELECT COUNT(*) FROM user_conversations WHERE user_id = ?", (user_id,))
             count = cursor.fetchone()[0]
             conn.close()
             return count

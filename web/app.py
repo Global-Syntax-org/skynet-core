@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Add current directory to path for local imports
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from main import SkynetLite
+from skynet.assistant import SkynetLite
 from auth import AuthManager, login_required, optional_auth, configure_session_security
 from concurrent.futures import ThreadPoolExecutor
 
@@ -334,7 +334,11 @@ def get_conversation_history():
     """Get user's conversation history"""
     try:
         limit = request.args.get('limit', 20, type=int)
-        history = auth_manager.get_user_conversation_history(g.current_user.id, limit)
+        # limit=0 => return all history
+        if limit == 0:
+            history = auth_manager.get_user_conversation_history(g.current_user.id, limit=0)
+        else:
+            history = auth_manager.get_user_conversation_history(g.current_user.id, limit)
         return jsonify({'success': True, 'history': history})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -414,6 +418,39 @@ def clear_session():
     try:
         # Clear user's conversation history from database
         auth_manager.clear_user_conversation_history(g.current_user.id)
+        
+        # Also clear in-memory conversation history for the running Skynet instance
+        try:
+            loop = ensure_background_loop()
+
+            def _clear_memory():
+                try:
+                    global skynet
+                    if skynet and hasattr(skynet, 'memory_manager'):
+                        mm = skynet.memory_manager
+                        # Try common memory shapes
+                        if hasattr(mm, 'conversation_history'):
+                            mm.conversation_history.clear()
+                        if hasattr(mm, 'clear_history'):
+                            try:
+                                mm.clear_history()
+                            except Exception:
+                                pass
+                        print('🧹 Cleared in-memory conversation history for current Skynet instance')
+                except Exception as e:
+                    print(f'⚠️ Error while clearing in-memory history: {e}')
+
+            # Schedule on the background loop thread
+            try:
+                loop.call_soon_threadsafe(_clear_memory)
+            except Exception:
+                # If scheduling fails, attempt a safe reinit to ensure fresh memory
+                try:
+                    asyncio.run_coroutine_threadsafe(init_skynet(), loop)
+                except Exception as ex:
+                    print(f'⚠️ Could not schedule memory clear or reinit: {ex}')
+        except Exception:
+            pass
         
         return jsonify({
             'status': 'cleared', 
