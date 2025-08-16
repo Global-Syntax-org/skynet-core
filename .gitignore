@@ -9,3 +9,4 @@ __pycache__/
 test_components.py
 test_ollama.py
 .venv/
+cookies.txt
