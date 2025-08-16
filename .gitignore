@@ -10,3 +10,7 @@ test_components.py
 test_ollama.py
 .venv/
 cookies.txt
+
+# Local DB files
+*.db
+web/*.db
