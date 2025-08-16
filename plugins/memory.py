@@ -145,6 +145,10 @@ class ChatMemoryManager:
     
     def _trim_history(self):
         """Keep only the most recent messages up to max_history"""
+        # If max_history is falsy (0 or None) treat as unlimited
+        if not self.max_history:
+            return
+
         if len(self.conversation_history) > self.max_history:
             # Remove oldest messages, but try to keep pairs of user/assistant messages
             excess = len(self.conversation_history) - self.max_history
