@@ -92,17 +92,48 @@ skynet-lite/
 Skynet Lite supports multiple configuration methods:
 
 ### Environment Variables
+
+Copy `.env.example` to `.env` and configure your API keys:
+```bash
+cp .env.example .env
+```
+
+**Primary AI Model (Local Ollama - Default):**
 ```bash
 export OLLAMA_BASE_URL="http://localhost:11434"
 export OLLAMA_MODEL="mistral"
+```
 
-# Web search providers (choose one)
-# DuckDuckGo requires no credentials and is used by default
-# To use Azure Cognitive Services Bing Search (Azure Search), set:
+**Alternative AI Models (Fallback Options):**
+```bash
+# OpenAI
+export OPENAI_API_KEY="<your_openai_api_key>"
+export OPENAI_MODEL="gpt-3.5-turbo"
+
+# Anthropic Claude
+export ANTHROPIC_API_KEY="<your_anthropic_api_key>"
+export ANTHROPIC_MODEL="claude-3-sonnet-20240229"
+
+# Google Gemini
+export GOOGLE_API_KEY="<your_google_api_key>"
+export GEMINI_MODEL="gemini-pro"
+
+# GitHub Copilot (Requires Enterprise/Custom Endpoint)
+export GITHUB_COPILOT_TOKEN="<your_github_copilot_token>"
+export COPILOT_API_URL="<your_copilot_endpoint_url>"
+export COPILOT_MODEL="copilot"
+```
+
+**Web Search Providers:**
+```bash
+# DuckDuckGo (Default - No API key required)
+# Automatically enabled, privacy-focused search
+
+# Azure Cognitive Services Bing Search
 export AZURE_SEARCH_KEY="<your_azure_search_key>"
 export AZURE_SEARCH_ENDPOINT="https://<resource-name>.cognitiveservices.azure.com/bing/v7.0/search"
 
-# To use Google Custom Search JSON API, set:
+# Google Custom Search JSON API
 export GOOGLE_API_KEY="<your_google_api_key>"
 export GOOGLE_CX="<your_custom_search_engine_id>"
 ```
@@ -131,6 +162,16 @@ You: Hello, what can you help me with?
 You: What's the latest news about AI?
 🔍 Searching the web...
 🤖 Skynet: Based on recent search results, here are the latest AI developments...
+```
+
+### AI Model Switching
+```
+# Copilot coding assistance
+You: Can you help me write a Python function for binary search?
+🤖 Skynet (Copilot): Here's a well-documented binary search implementation...
+
+# Try the Copilot demo
+python3 demo_copilot.py
 ```
 
 ### Commands
@@ -197,6 +238,9 @@ python3 test_components.py
 
 # Test Ollama integration
 python3 test_ollama.py
+
+# Test GitHub Copilot integration
+python3 test_copilot.py
 
 # Test web search
 python3 test_ddg_search.py
