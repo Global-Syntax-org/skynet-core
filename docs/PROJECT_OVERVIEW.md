@@ -4,7 +4,7 @@
 Skynet Lite is a production-ready modular AI chatbot system that combines local LLM processing with web search capabilities, featuring both console and web interfaces. Designed for robotics integration, privacy-first operation, and extensible plugin architecture.
 
 ## Key Achievements
-- ✅ Multi-model support (Ollama, OpenAI, Claude, Gemini, GitHub Copilot)
+- ✅ Multi-model support (Ollama, OpenAI, Claude, Gemini, GitHub Copilot, Microsoft Copilot)
 - ✅ Web UI with Flask-based responsive interface
 - ✅ DuckDuckGo search integration with fallback providers
 - ✅ Persistent conversation memory
@@ -64,14 +64,15 @@ class SkynetLite:
 ```
 
 #### 2. Web Interface (`web/app.py`)
-- **Purpose**: Flask-based web UI for browser interaction
-- **Pattern**: RESTful API with session management
+- **Purpose**: Flask-based web UI for browser interaction with multi-model AI support
+- **Pattern**: RESTful API with session management and async processing
 - **Key Features**:
   - Responsive design with mobile support
-  - Real-time chat interface
-  - Session persistence and memory management
-  - Background async processing
+  - Real-time chat interface with model selection
+  - Session persistence and conversation memory
+  - Background async processing for multiple AI providers
   - Health check and diagnostics endpoints
+  - Auto-fallback between Ollama, OpenAI, Claude, GitHub Copilot, Microsoft Copilot, and Gemini
 
 ```python
 @app.route('/chat', methods=['POST'])
@@ -96,6 +97,7 @@ def health():
   - **Claude** (Anthropic) - API fallback  
   - **Gemini** (Google) - API fallback
   - **GitHub Copilot** - Development assistant
+  - **Microsoft Copilot** - Microsoft AI assistant
   - **Local Model** - Basic fallback
 
 ```python
@@ -107,9 +109,10 @@ class LoaderManager:
         # 1. Ollama (if running)
         # 2. OpenAI (if API key available)
         # 3. Claude (if API key available)
-        # 4. Gemini (if API key available)
-        # 5. Copilot (if token available)
-        # 6. Local fallback
+        # 4. GitHub Copilot (if token available)
+        # 5. Microsoft Copilot (if API key available)
+        # 6. Gemini (if API key available)
+        # 7. Local fallback
 ```
 
 #### 2. Configuration Management (`config.py`)

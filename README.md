@@ -14,7 +14,7 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
 - **🛡️ Privacy-First** - All AI processing happens locally on your machine
 - **🚀 Async Architecture** - High-performance async/await implementation
 - **🎯 Robotics Ready** - Designed for integration with ROS and Webots
-- **🔄 Multi-Model Support** - Fallback support for OpenAI, Claude, Gemini, and GitHub Copilot
+- **🔄 Multi-Model Support** - Fallback support for OpenAI, Claude, Gemini, GitHub Copilot, and Microsoft Copilot
 - **🛠️ Development Tools** - Diagnostic utilities and test scripts included
 
 ## 🚀 Quick Start
@@ -122,6 +122,11 @@ export GEMINI_MODEL="gemini-pro"
 export GITHUB_COPILOT_TOKEN="<your_github_copilot_token>"
 export COPILOT_API_URL="<your_copilot_endpoint_url>"
 export COPILOT_MODEL="copilot"
+
+# Microsoft Copilot (Azure Cognitive Services)
+export MICROSOFT_COPILOT_API_KEY="<your_microsoft_api_key>"
+export MICROSOFT_COPILOT_ENDPOINT="<your_azure_endpoint>"
+export MICROSOFT_COPILOT_MODEL="copilot"
 ```
 
 **Web Search Providers:**

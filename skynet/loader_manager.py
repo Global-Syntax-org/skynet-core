@@ -76,19 +76,35 @@ class LoaderManager:
         else:
             logger.info("No ANTHROPIC_API_KEY found, skipping Claude.")
 
-        # Try Copilot if token is available
+        # Try GitHub Copilot if token is available
         if os.getenv('GITHUB_COPILOT_TOKEN'):
             try:
                 from loaders.copilot_loader import CopilotModelLoader
                 self.loader = CopilotModelLoader()
                 if not await self.loader.initialize():
-                    raise RuntimeError("Failed to initialize Copilot loader")
+                    raise RuntimeError("Failed to initialize GitHub Copilot loader")
                 logger.info("Using CopilotModelLoader")
                 return True
             except (ModuleNotFoundError, ImportError) as e:
                 logger.warning(f"CopilotModelLoader not available: {e}")
             except Exception as e:
                 logger.error(f"Failed to initialize CopilotModelLoader: {e}")
+
+        # Try Microsoft Copilot if API key is available
+        if os.getenv('MICROSOFT_COPILOT_API_KEY'):
+            try:
+                from loaders.microsoft_copilot_loader import MicrosoftCopilotLoader
+                self.loader = MicrosoftCopilotLoader()
+                if not await self.loader.initialize():
+                    raise RuntimeError("Failed to initialize Microsoft Copilot loader")
+                logger.info("Using MicrosoftCopilotLoader")
+                return True
+            except (ModuleNotFoundError, ImportError) as e:
+                logger.warning(f"MicrosoftCopilotLoader not available: {e}")
+            except Exception as e:
+                logger.error(f"Failed to initialize MicrosoftCopilotLoader: {e}")
+        else:
+            logger.info("No MICROSOFT_COPILOT_API_KEY found, skipping Microsoft Copilot.")
 
         # Fall back to LocalModelLoader
         try:
