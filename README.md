@@ -1,28 +1,28 @@
-# 🤖 Skynet Lite
+# 🤖 Skynet Core
 
-- **Current Version**: 1.4.1
+- **Current Version**: 2.0.0-core
 
-A lightweight, local AI chatbot powered by Ollama and enhanced with web search capabilities. Built for robotics simulation, swarm intelligence, and general AI assistance with privacy-first local LLM execution.
+A cloud-first AI chatbot powered by multiple AI providers with advanced web search capabilities. Built for enterprise deployment, multi-model intelligence, and scalable cloud architecture without local dependencies.
 
 ## ✨ Features
 
-- **🧠 Local AI Processing** - Powered by Ollama with Mistral 7B model
-- **🔍 Web Search Integration** - DuckDuckGo by default, with optional Azure Search and Google Custom Search providers
-- **💾 Conversation Memory** - Persistent chat history and context management
-- **🌐 Web Interface** - Clean, responsive Flask-based web UI alongside console interface
+- **☁️ Cloud-First AI Processing** - Multiple enterprise AI providers with intelligent fallback
+- **🔍 Advanced Web Search** - DuckDuckGo integration with optional Azure Search and Google Custom Search
+- **💾 Persistent Memory** - Enterprise-grade conversation history and context management
+- **🌐 Modern Web Interface** - Responsive Flask-based web UI with real-time chat
 - **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
-- **🛡️ Privacy-First** - All AI processing happens locally on your machine
-- **🚀 Async Architecture** - High-performance async/await implementation
-- **🎯 Robotics Ready** - Designed for integration with ROS and Webots
-- **🔄 Multi-Model Support** - Fallback support for OpenAI, Claude, Gemini, GitHub Copilot, and Microsoft Copilot
-- **🛠️ Development Tools** - Diagnostic utilities and test scripts included
+- **🏢 Enterprise Ready** - Scalable, secure, cloud-native deployment
+- **🚀 High Performance** - Async architecture with concurrent AI processing
+- **🎯 Multi-Model Intelligence** - Seamless switching between AI providers
+- **🔄 Smart Fallback** - Automatic provider switching for maximum reliability
+- **🛠️ Development Tools** - Comprehensive testing and diagnostic utilities
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Python 3.10+
-- [Ollama](https://ollama.com/download) installed and running
+- At least one cloud AI provider API key (OpenAI, Claude, Gemini, etc.)
 
 ### Installation
 
@@ -30,6 +30,7 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
    ```bash
    git clone https://github.com/StuxnetStudios/skynet-lite.git
    cd skynet-lite
+   git checkout feature/skynet-core
    ```
 
 2. **Run the setup script**
@@ -41,13 +42,13 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
    - Install all dependencies
    - Verify system requirements
 
-3. **Start Ollama and pull the Mistral model**
+3. **Configure your AI provider**
    ```bash
-   ollama serve
-   ollama pull mistral
+   cp .env.example .env
+   # Edit .env and add at least one API key
    ```
 
-4. **Launch Skynet Lite**
+4. **Launch Skynet Core**
    
    **Console Interface:**
    ```bash
@@ -59,12 +60,6 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
    cd web
    python3 run.py
    # Open http://localhost:5000 in your browser
-   ```
-   
-   **Alternative web startup:**
-   ```bash
-   cd web
-   python3 app.py
    ```
 
 ## 🏗️ Architecture
@@ -98,32 +93,26 @@ Copy `.env.example` to `.env` and configure your API keys:
 cp .env.example .env
 ```
 
-**Primary AI Model (Local Ollama - Default):**
+**Primary AI Models (Choose at least one):**
 ```bash
-export OLLAMA_BASE_URL="http://localhost:11434"
-export OLLAMA_MODEL="mistral"
-```
-
-**Alternative AI Models (Fallback Options):**
-```bash
-# OpenAI
+# OpenAI (Recommended)
 export OPENAI_API_KEY="<your_openai_api_key>"
 export OPENAI_MODEL="gpt-3.5-turbo"
 
-# Anthropic Claude
+# Anthropic Claude (Advanced reasoning)
 export ANTHROPIC_API_KEY="<your_anthropic_api_key>"
 export ANTHROPIC_MODEL="claude-3-sonnet-20240229"
 
-# Google Gemini
+# Google Gemini (Multimodal AI)
 export GOOGLE_API_KEY="<your_google_api_key>"
 export GEMINI_MODEL="gemini-pro"
 
-# GitHub Copilot (Requires Enterprise/Custom Endpoint)
+# GitHub Copilot (Developer assistant - Requires Enterprise)
 export GITHUB_COPILOT_TOKEN="<your_github_copilot_token>"
 export COPILOT_API_URL="<your_copilot_endpoint_url>"
 export COPILOT_MODEL="copilot"
 
-# Microsoft Copilot (Azure Cognitive Services)
+# Microsoft Copilot (Enterprise AI - Requires Azure)
 export MICROSOFT_COPILOT_API_KEY="<your_microsoft_api_key>"
 export MICROSOFT_COPILOT_ENDPOINT="<your_azure_endpoint>"
 export MICROSOFT_COPILOT_MODEL="copilot"

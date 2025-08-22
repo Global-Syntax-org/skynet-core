@@ -1,16 +1,16 @@
-# Skynet Lite - Project Overview
+# Skynet Core - Project Overview
 
 ## Current Status
-Skynet Lite is a production-ready modular AI chatbot system that combines local LLM processing with web search capabilities, featuring both console and web interfaces. Designed for robotics integration, privacy-first operation, and extensible plugin architecture.
+Skynet Core is a production-ready cloud-first AI chatbot system that combines multiple enterprise AI providers with advanced web search capabilities, featuring both console and web interfaces. Designed for enterprise deployment, scalable architecture, and intelligent multi-model AI processing.
 
 ## Key Achievements
-- ✅ Multi-model support (Ollama, OpenAI, Claude, Gemini, GitHub Copilot, Microsoft Copilot)
-- ✅ Web UI with Flask-based responsive interface
-- ✅ DuckDuckGo search integration with fallback providers
-- ✅ Persistent conversation memory
+- ✅ Cloud-first multi-model support (OpenAI, Claude, Gemini, GitHub Copilot, Microsoft Copilot)
+- ✅ Enterprise-grade web UI with responsive Flask interface
+- ✅ Advanced web search integration with multiple providers
+- ✅ Persistent conversation memory with enterprise features
 - ✅ Comprehensive test suite and diagnostic tools
-- ✅ Docker-ready configuration
-- ✅ Production deployment scripts
+- ✅ Docker-ready cloud deployment configuration
+- ✅ Production-ready scaling and monitoring
 
 ## Architecture Overview
 
@@ -26,8 +26,8 @@ Skynet Lite is a production-ready modular AI chatbot system that combines local 
          │                 │                 │                 │
          ▼                 ▼                 ▼                 ▼
 ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
-│ Model Loaders   │ │   Web Search    │ │ Memory Manager  │ │   Config Mgmt   │
-│ (Ollama/API)    │ │ (DDG/Azure/etc) │ │ (Conversation)  │ │ (Multi-source)  │
+│ Cloud AI Models │ │   Web Search    │ │ Memory Manager  │ │   Config Mgmt   │
+│ (OpenAI/Claude) │ │ (DDG/Azure/etc) │ │ (Conversation)  │ │ (Multi-source)  │
 └─────────────────┘ └─────────────────┘ └─────────────────┘ └─────────────────┘
 ```
 
@@ -72,7 +72,7 @@ class SkynetLite:
   - Session persistence and conversation memory
   - Background async processing for multiple AI providers
   - Health check and diagnostics endpoints
-  - Auto-fallback between Ollama, OpenAI, Claude, GitHub Copilot, Microsoft Copilot, and Gemini
+  - Auto-fallback between OpenAI, Claude, GitHub Copilot, Microsoft Copilot, and Gemini
 
 ```python
 @app.route('/chat', methods=['POST'])
@@ -92,27 +92,23 @@ def health():
 - **Purpose**: Unified interface for multiple AI model providers
 - **Pattern**: Strategy pattern with automatic fallback
 - **Supported Models**:
-  - **Ollama** (local LLMs) - Primary choice
-  - **OpenAI** (GPT models) - API fallback
-  - **Claude** (Anthropic) - API fallback  
-  - **Gemini** (Google) - API fallback
-  - **GitHub Copilot** - Development assistant
-  - **Microsoft Copilot** - Microsoft AI assistant
-  - **Local Model** - Basic fallback
+  - **OpenAI** (GPT models) - Primary choice for reliability
+  - **Claude** (Anthropic) - Advanced reasoning and analysis
+  - **GitHub Copilot** - Development and coding assistant
+  - **Microsoft Copilot** - Enterprise AI assistant
+  - **Gemini** (Google) - Multimodal AI capabilities
 
 ```python
 class LoaderManager:
     """Manages different model loaders with fallback support"""
     
     async def initialize(self):
-        """Try loaders in priority order"""
-        # 1. Ollama (if running)
-        # 2. OpenAI (if API key available)
-        # 3. Claude (if API key available)
-        # 4. GitHub Copilot (if token available)
-        # 5. Microsoft Copilot (if API key available)
-        # 6. Gemini (if API key available)
-        # 7. Local fallback
+        """Try cloud AI loaders in priority order"""
+        # 1. OpenAI (if API key available)
+        # 2. Claude (if API key available)
+        # 3. GitHub Copilot (if token available)
+        # 4. Microsoft Copilot (if API key available)
+        # 5. Gemini (if API key available)
 ```
 
 #### 2. Configuration Management (`config.py`)
@@ -138,26 +134,27 @@ class Config:
     memory_file: str = "conversation_history.json"
 ```
 
-#### 3. Model Interface (`models/loader.py`)
-- **Purpose**: Async interface to Ollama with resource management
-- **Pattern**: Async context manager with proper cleanup
+#### 3. Cloud AI Interface (`loaders/`)
+- **Purpose**: Async interface to cloud AI providers with resource management
+- **Pattern**: Async context manager with proper cleanup and fallback
 - **Features**:
-  - Model availability checking
-  - Completion generation with error handling
-  - Resource cleanup and connection management
+  - Multi-provider support with intelligent routing
+  - Rate limiting and quota management
+  - Error handling with automatic retries
+  - Resource cleanup and connection pooling
 
 ```python
-class OllamaModelLoader:
-    """Async Ollama interface with resource management"""
+class CloudAILoader:
+    """Async cloud AI interface with resource management"""
     
     async def ensure_model_available(self, model_name: str) -> bool:
-        """Check and download model if needed"""
+        """Check model availability and access permissions"""
         
     async def generate_completion(self, prompt: str, model: str) -> str:
-        """Generate completion with error handling"""
+        """Generate completion with error handling and retries"""
         
     async def close(self) -> None:
-        """Clean up async resources"""
+        """Clean up async resources and connections"""
 ```
 
 #### 4. Web Search Integration (`tools/web_search.py`)
@@ -209,9 +206,9 @@ class ChatMemoryManager:
 ```
 User Input → Query Classification → Route Decision
                                          ↓
-Local Query ←→ Web Search Query ←→ Context Memory
+Cloud Query ←→ Web Search Query ←→ Context Memory
     ↓               ↓                    ↓
-Ollama LLM ←→ DuckDuckGo Search ←→ Memory Manager
+Cloud AI API ←→ DuckDuckGo Search ←→ Memory Manager
     ↓               ↓                    ↓
 Response Generation ←→ Context Update ←→ User Output
 ```
@@ -334,9 +331,9 @@ async def test_completion_generation(mock_ollama_client):
 
 ### Environment Variables
 ```bash
-# Ollama Configuration
-export OLLAMA_BASE_URL="http://localhost:11434"
-export OLLAMA_MODEL="mistral"
+# Primary AI Provider (Choose one)
+export OPENAI_API_KEY="<your_openai_api_key>"
+export OPENAI_MODEL="gpt-3.5-turbo"
 
 # Search Configuration
 export SEARCH_PROVIDER="duckduckgo"
@@ -350,12 +347,12 @@ export MEMORY_FILE="conversation_history.json"
 ### YAML Configuration
 ```yaml
 # config.yaml
-ollama:
-  base_url: "http://localhost:11434"
-  model: "mistral"
+openai:
+  api_key: "your_openai_api_key"
+  model: "gpt-3.5-turbo"
 
 search:
-  provider: "duckduckgo"  # or "duckduckgo_instant"
+  provider: "duckduckgo"
   max_results: 3
 
 memory:
@@ -370,22 +367,24 @@ plugins:
 
 ## Deployment Considerations
 
-### Local Development
-- All services run locally (Ollama, Python application)
-- No external API dependencies (DuckDuckGo doesn't require keys)
+### Cloud Development
+- All AI processing happens in the cloud via secure APIs
+- No local dependencies or complex installations
 - Configuration through environment variables or YAML
+- Support for multiple concurrent API providers
 
 ### Production Deployment
-- Docker containerization for consistent environments
+- Docker containerization for cloud-native environments
 - Volume mounts for conversation history persistence
-- Health checks for Ollama service availability
-- Graceful shutdown handling
+- Health checks for API connectivity and rate limits
+- Graceful shutdown and failover handling
+- Auto-scaling support for enterprise workloads
 
-### Robotics Integration
-- ROS node compatibility patterns
-- Webots controller integration examples
-- Real-time response optimization
-- Resource constraint handling
+### Enterprise Integration
+- Multi-cloud deployment support
+- Enterprise authentication and authorization
+- Advanced monitoring and logging capabilities
+- Cost optimization and usage tracking
 
 ## Recent Changes
 
