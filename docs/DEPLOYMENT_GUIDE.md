@@ -30,7 +30,9 @@
    **Required Variables:**
    ```bash
    # Ollama Configuration
-   OLLAMA_BASE_URL=http://localhost:11434
+   # Note: OLLAMA_BASE_URL is deprecated in favor of package-based configuration.
+   # Configure the model name using OLLAMA_MODEL and use `skynet.config` for advanced settings.
+   # If you run Ollama on a custom URL, you may still set OLLAMA_BASE_URL.
    OLLAMA_MODEL=mistral
    
    # Optional: API Keys for fallback models

@@ -161,65 +161,28 @@ Returns the main chat interface HTML page.
 
 ### Config
 
-Configuration management with multiple sources.
+Configuration management is provided by `skynet.config.Config` which prefers
+pydantic-settings for environment and `.env` support. Use:
 
 ```python
-@dataclass
-class Config:
-    """Configuration with environment variable support"""
-    
-    # Ollama Configuration
-    ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "mistral"
-    
-    # Search Configuration  
-    enable_web_search: bool = True
-    search_provider: str = "duckduckgo"  # duckduckgo, azure, google
-    
-    # Memory Configuration
-    max_memory_turns: int = 10
-    
-    @classmethod
-    def from_env(cls) -> 'Config':
-        """Load configuration from environment variables"""
-        
-    @classmethod
-    def from_file(cls, config_path: str) -> 'Config':
-        """Load configuration from YAML file"""
+from skynet.config import Config
+
+cfg = Config()
+print(cfg.ollama_model)
 ```
+
+Notes:
+- The older `OLLAMA_BASE_URL` environment variable is deprecated; the current
+    configuration focuses on `OLLAMA_MODEL` and provider selection. If you still
+    run Ollama on a custom URL, set `OLLAMA_BASE_URL` in your environment, but
+    prefer updating code to use `skynet.config` when possible.
             
         Returns:
             Response based on web search results and LLM processing
         """
 ```
 
-### Config
-
-Configuration management with multi-source support.
-
-```python
-@dataclass
-class Config:
-    """Configuration class with environment and file support"""
-    
-    # Ollama Configuration
-    ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "mistral"
-    
-    # Search Configuration
-    search_provider: str = "duckduckgo"
-    search_max_results: int = 3
-    
-    # Memory Configuration
-    memory_max_turns: int = 10
-    memory_file: str = "conversation_history.json"
-    
-    def __init__(self) -> None:
-        """Initialize with environment and file overrides"""
-    
-    def create_default_config_file(self) -> None:
-        """Create default config.yaml file"""
-```
+(See above for the recommended `skynet.config.Config` usage.)
 
 ### OllamaModelLoader
 
@@ -529,7 +492,7 @@ if __name__ == "__main__":
 ### Custom Configuration
 
 ```python
-from config import Config
+from skynet.config import Config
 from main import SkynetLite
 
 # Custom configuration
@@ -545,15 +508,15 @@ chatbot.config = config
 
 ```python
 from typing import Any
-from config import Config
+from skynet.config import Config
 
 class CustomPlugin:
     """Example custom plugin"""
-    
+
     def __init__(self, config: Config):
         self.config = config
         self.initialized = False
-    
+
     async def initialize(self) -> bool:
         """Initialize plugin"""
         try:

@@ -264,6 +264,10 @@ def fetch_data():
 Use specific exceptions:
 ```python
 # Good
+   # Note: OLLAMA_BASE_URL is deprecated; prefer `OLLAMA_MODEL` and `skynet.config`
+   # ollama_base_url: str = field(
+   #     metadata={"env": "OLLAMA_BASE_URL", "description": "Ollama server URL"}
+   # )
 try:
     result = await model.generate(prompt)
 except ModelNotAvailableError:

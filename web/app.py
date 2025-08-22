@@ -501,17 +501,7 @@ def get_user_profile():
         'message_count': auth_manager.get_user_message_count(user.id)
     })
 
-def init_db():
-    """Initialize the SQLite database."""
-    db_path = os.path.join(os.path.dirname(__file__), 'skynet_lite.db')
-    conn = sqlite3.connect(db_path)
-    with open(os.path.join(os.path.dirname(__file__), 'schema.sql'), 'r') as f:
-        conn.executescript(f.read())
-    conn.close()
-
-# Initialize the database
-init_db()
-
+# (Database initialized earlier during module import; avoid re-defining/initializing here.)
 if __name__ == '__main__':
     print("🌐 Starting Skynet Lite Web Interface...")
     print("🔗 Open http://localhost:5000 in your browser")

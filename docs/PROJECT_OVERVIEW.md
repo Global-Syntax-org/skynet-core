@@ -112,7 +112,7 @@ class LoaderManager:
         # 6. Local fallback
 ```
 
-#### 2. Configuration Management (`config.py`)
+#### 4. Configuration Management (`skynet/config.py`)
 - **Purpose**: Multi-source configuration with environment override
 - **Pattern**: Dataclass with validation and type hints
 - **Sources**: Default values → Environment variables → YAML files
@@ -123,7 +123,8 @@ class Config:
     """Configuration with multiple source support"""
     
     # Ollama Configuration
-    ollama_base_url: str = "http://localhost:11434"
+    # ollama_base_url is deprecated; prefer configuring via `skynet.config` and OLLAMA_MODEL
+    # ollama_base_url: str = "http://localhost:11434"
     ollama_model: str = "mistral"
     
     # Search Configuration
@@ -332,7 +333,8 @@ async def test_completion_generation(mock_ollama_client):
 ### Environment Variables
 ```bash
 # Ollama Configuration
-export OLLAMA_BASE_URL="http://localhost:11434"
+# Note: `OLLAMA_BASE_URL` is deprecated; prefer configuring model via `OLLAMA_MODEL`
+# and use `from skynet.config import Config` for packaged configuration.
 export OLLAMA_MODEL="mistral"
 
 # Search Configuration

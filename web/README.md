@@ -43,7 +43,8 @@ Simple Flask-based web interface for Skynet Lite.
 
 The web UI uses the same configuration as the main Skynet Lite application:
 
-- Environment variables (OLLAMA_BASE_URL, AZURE_SEARCH_KEY, etc.)
+- Environment variables (OLLAMA_MODEL, AZURE_SEARCH_KEY, etc.)
+   - Note: `OLLAMA_BASE_URL` is deprecated; use `skynet.config` for advanced configuration.
 - `config.yaml` file in the parent directory
 
 **Database**: User accounts and conversation history are stored in `web/skynet_lite.db`.

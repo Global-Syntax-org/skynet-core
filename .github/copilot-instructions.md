@@ -24,7 +24,7 @@ This is a Python-based local AI chatbot project that integrates Ollama (local LL
 ## Key Components
 
 1. **main.py** - Entry point and chat orchestration
-2. **config.py** - Configuration management with environment variable support
+2. **skynet/config.py** - Configuration management with environment variable support
 3. **models/loader.py** - Ollama model interface and management
 4. **tools/web_search.py** - Bing Search API integration
 5. **plugins/memory.py** - Conversation history and context management

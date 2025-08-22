@@ -73,13 +73,13 @@ def check_config():
         return True
     else:
         print("⚠️  Configuration file not found")
-        print("   Creating default config.yaml...")
-        
-        # Create default config
-        from config import Config
-        config = Config()
-        config.create_default_config_file()
-        return True
+    print("   Creating default config.yaml...")
+
+    # Create default config
+    from skynet.config import Config
+    config = Config()
+    config.create_default_config_file()
+    return True
 
 
 def pull_ollama_model():

@@ -198,7 +198,7 @@ Create a `.env` file to customize behavior:
 
 ```bash
 # AI Model Configuration
-OLLAMA_BASE_URL=http://localhost:11434
+# (Deprecated) OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=mistral
 
 # Memory Settings

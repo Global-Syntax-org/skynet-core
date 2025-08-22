@@ -72,7 +72,8 @@ A lightweight, local AI chatbot powered by Ollama and enhanced with web search c
 ```
 skynet-lite/
 ├── main.py              # Entry point and chat orchestration
-├── config.py            # Configuration management
+├── skynet/              # Packaged python module
+│   └── config.py        # Configuration management (import: `from skynet.config import Config`)
 ├── setup.py             # Setup and dependency verification
 ├── web/                 # Web UI interface
 │   ├── app.py           # Flask web application
@@ -89,34 +90,31 @@ skynet-lite/
 
 ## 🔧 Configuration
 
-Skynet Lite supports multiple configuration methods:
+Skynet Lite uses a packaged configuration object: import it with
+`from skynet.config import Config`.
+
+See `docs/CONFIGURATION.md` for full details and migration notes.
 
 ### Environment Variables
 ```bash
-export OLLAMA_BASE_URL="http://localhost:11434"
+# Core settings
 export OLLAMA_MODEL="mistral"
+export SEARCH_PROVIDER="duckduckgo"
+export SEARCH_USE_INSTANT_ANSWERS=1
 
-# Web search providers (choose one)
-# DuckDuckGo requires no credentials and is used by default
-# To use Azure Cognitive Services Bing Search (Azure Search), set:
+# Optional: provider-specific credentials
+# Azure (Bing) Search
 export AZURE_SEARCH_KEY="<your_azure_search_key>"
 export AZURE_SEARCH_ENDPOINT="https://<resource-name>.cognitiveservices.azure.com/bing/v7.0/search"
 
-# To use Google Custom Search JSON API, set:
+# Google Custom Search JSON API
 export GOOGLE_API_KEY="<your_google_api_key>"
 export GOOGLE_CX="<your_custom_search_engine_id>"
 ```
 
 ### Configuration File
-Create or edit `config.yaml`:
-```yaml
-ollama:
-  base_url: "http://localhost:11434"
-  model: "mistral"
-  
-memory:
-  max_turns: 10
-```
+The project supports a simple `config.yaml` created by `Config.create_default_config_file()`.
+See `docs/CONFIGURATION.md` for details and examples.
 
 ## 💬 Usage Examples
 

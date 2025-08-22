@@ -19,7 +19,13 @@ class SkynetLite:
 
     def _load_config(self):
         """Load configuration using the proper Config class"""
-        from config import Config
+        # Prefer the package-local config so imports are package-qualified
+        try:
+            from skynet.config import Config
+        except Exception:
+            # Fall back to top-level shim for backward compatibility
+            from config import Config
+
         return Config()
 
     async def initialize(self) -> bool:

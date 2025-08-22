@@ -96,7 +96,7 @@ def create_test_structure() -> bool:
 import pytest
 import asyncio
 from unittest.mock import AsyncMock, Mock
-from config import Config
+from skynet.config import Config
 
 
 @pytest.fixture
@@ -145,7 +145,7 @@ class TestSkynetLite:
             "test_config.py": '''"""Tests for configuration management"""
 import pytest
 from unittest.mock import patch, mock_open
-from config import Config
+    from skynet.config import Config
 
 
 class TestConfig:

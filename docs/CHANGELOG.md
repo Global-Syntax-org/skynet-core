@@ -144,7 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ```
 skynet-lite/
 ├── main.py              # Entry point and chat orchestration
-├── config.py            # Configuration management
+├── skynet/config.py     # Configuration management
 ├── requirements.txt     # Dependencies
 ├── models/
 │   ├── __init__.py     # Package initialization
