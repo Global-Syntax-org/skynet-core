@@ -248,7 +248,8 @@ class SemanticKernelOrchestrator:
                 self.logger.warning(f"Skills directory not found: {skills_path}")
                 return
             
-            manifest_files = list(skills_path.glob("*.json"))
+            # Load skill manifests from main skills directory and subdirectories
+            manifest_files = list(skills_path.glob("*.json")) + list(skills_path.glob("*/*.json"))
             
             for manifest_file in manifest_files:
                 try:
@@ -267,10 +268,97 @@ class SemanticKernelOrchestrator:
                         'error': str(error)
                     })
             
+            # Initialize skill implementations
+            await self.initialize_skill_implementations()
+            
             self.logger.info(f"📦 Loaded {len(self.skills)} skills")
             
         except Exception as error:
             raise Exception(f"Failed to discover skills: {error}")
+    
+    async def initialize_skill_implementations(self) -> None:
+        """Initialize all skill implementations"""
+        try:
+            import sys
+            
+            # Initialize HTTP skill
+            try:
+                sys.path.append("main/skills")
+                from http_skill import make_request, download_file
+                self.skill_functions.update({
+                    "http_request": make_request,
+                    "download_file": download_file
+                })
+                self.logger.info("✅ HTTP skill functions registered")
+            except ImportError as e:
+                self.logger.warning(f"Could not import HTTP skill: {e}")
+            
+            # Initialize Database skill
+            try:
+                sys.path.append("main/skills/database")
+                from database_skill import execute_query, create_table, insert_data, backup_database
+                self.skill_functions.update({
+                    "execute_query": execute_query,
+                    "create_table": create_table,
+                    "insert_data": insert_data,
+                    "backup_database": backup_database
+                })
+                self.logger.info("✅ Database skill functions registered")
+            except ImportError as e:
+                self.logger.warning(f"Could not import Database skill: {e}")
+            
+            # Initialize Filesystem skill
+            try:
+                sys.path.append("main/skills/filesystem")
+                from filesystem_skill import read_file, write_file, list_directory, search_files, compress_files
+                self.skill_functions.update({
+                    "read_file": read_file,
+                    "write_file": write_file,
+                    "list_directory": list_directory,
+                    "search_files": search_files,
+                    "compress_files": compress_files
+                })
+                self.logger.info("✅ Filesystem skill functions registered")
+            except ImportError as e:
+                self.logger.warning(f"Could not import Filesystem skill: {e}")
+            
+            # Initialize API Integration skill
+            try:
+                sys.path.append("main/skills/api")
+                from api_integration_skill import (make_api_call, graphql_query, register_webhook, 
+                                                 verify_webhook, batch_api_calls, monitor_api_health)
+                self.skill_functions.update({
+                    "make_api_call": make_api_call,
+                    "graphql_query": graphql_query,
+                    "register_webhook": register_webhook,
+                    "verify_webhook": verify_webhook,
+                    "batch_api_calls": batch_api_calls,
+                    "monitor_api_health": monitor_api_health
+                })
+                self.logger.info("✅ API Integration skill functions registered")
+            except ImportError as e:
+                self.logger.warning(f"Could not import API Integration skill: {e}")
+            
+            # Initialize Memory skill
+            try:
+                sys.path.append("main/skills/memory")
+                from memory_skill import (store_memory, search_memories, create_knowledge_graph, 
+                                        compress_memories, get_memory_stats)
+                self.skill_functions.update({
+                    "store_memory": store_memory,
+                    "search_memories": search_memories,
+                    "create_knowledge_graph": create_knowledge_graph,
+                    "compress_memories": compress_memories,
+                    "get_memory_stats": get_memory_stats
+                })
+                self.logger.info("✅ Memory skill functions registered")
+            except ImportError as e:
+                self.logger.warning(f"Could not import Memory skill: {e}")
+            
+            self.logger.info(f"🎯 Total skill functions registered: {len(self.skill_functions)}")
+            
+        except Exception as e:
+            self.logger.error(f"Failed to initialize skill implementations: {e}")
 
     async def load_skill_manifest(self, manifest_path: Path) -> SkillManifest:
         """Load skill manifest from JSON file"""

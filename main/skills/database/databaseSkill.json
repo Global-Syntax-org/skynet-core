@@ -1,0 +1,221 @@
+{
+  "skillId": "databaseSkill",
+  "name": "Database Operations Skill",
+  "description": "Comprehensive database operations with SQLite, PostgreSQL, and MongoDB support",
+  "version": "2.0.0",
+  "category": "data",
+  "priority": 90,
+  "dependencies": ["fileSystemSkill"],
+  "capabilities": [
+    "sql_execution",
+    "table_management",
+    "data_insertion",
+    "data_querying",
+    "schema_management",
+    "backup_restore",
+    "migration_support"
+  ],
+  "configuration": {
+    "default_db_type": "sqlite",
+    "connection_pool_size": 10,
+    "query_timeout": 30,
+    "auto_create_tables": true,
+    "backup_enabled": true,
+    "migration_path": "./migrations"
+  },
+  "functions": [
+    {
+      "name": "execute_query",
+      "description": "Execute SQL query with parameter binding and result formatting",
+      "parameters": {
+        "query": {
+          "type": "string",
+          "description": "SQL query to execute",
+          "required": true
+        },
+        "parameters": {
+          "type": "object",
+          "description": "Query parameters for safe binding",
+          "default": {}
+        },
+        "database": {
+          "type": "string",
+          "description": "Database connection identifier",
+          "default": "default"
+        },
+        "fetch_mode": {
+          "type": "string",
+          "description": "Result fetch mode",
+          "enum": ["all", "one", "many"],
+          "default": "all"
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "data": {"type": "array"},
+          "rows_affected": {"type": "integer"},
+          "execution_time": {"type": "number"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "create_table",
+      "description": "Create database table with schema definition",
+      "parameters": {
+        "table_name": {
+          "type": "string",
+          "description": "Name of the table to create",
+          "required": true
+        },
+        "schema": {
+          "type": "object",
+          "description": "Table schema definition",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "Database connection identifier",
+          "default": "default"
+        },
+        "if_not_exists": {
+          "type": "boolean",
+          "description": "Only create if table doesn't exist",
+          "default": true
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "table_created": {"type": "boolean"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "insert_data",
+      "description": "Insert data into database table with batch support",
+      "parameters": {
+        "table_name": {
+          "type": "string",
+          "description": "Target table name",
+          "required": true
+        },
+        "data": {
+          "type": "array",
+          "description": "Data records to insert",
+          "required": true
+        },
+        "database": {
+          "type": "string",
+          "description": "Database connection identifier",
+          "default": "default"
+        },
+        "on_conflict": {
+          "type": "string",
+          "description": "Conflict resolution strategy",
+          "enum": ["ignore", "replace", "update"],
+          "default": "ignore"
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "inserted_count": {"type": "integer"},
+          "last_insert_id": {"type": "integer"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "backup_database",
+      "description": "Create database backup with compression",
+      "parameters": {
+        "database": {
+          "type": "string",
+          "description": "Database to backup",
+          "default": "default"
+        },
+        "backup_path": {
+          "type": "string",
+          "description": "Backup file path",
+          "required": true
+        },
+        "compress": {
+          "type": "boolean",
+          "description": "Compress backup file",
+          "default": true
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "backup_size": {"type": "integer"},
+          "backup_path": {"type": "string"},
+          "error": {"type": "string"}
+        }
+      }
+    }
+  ],
+  "signals": {
+    "query_started": {
+      "description": "Emitted when database query begins execution",
+      "data": {"query": "string", "database": "string"}
+    },
+    "query_completed": {
+      "description": "Emitted when database query completes",
+      "data": {"rows_affected": "integer", "execution_time": "number"}
+    },
+    "query_failed": {
+      "description": "Emitted when database query fails",
+      "data": {"error": "string", "query": "string"}
+    },
+    "table_created": {
+      "description": "Emitted when new table is created",
+      "data": {"table_name": "string", "database": "string"}
+    },
+    "backup_completed": {
+      "description": "Emitted when database backup completes",
+      "data": {"backup_path": "string", "size": "integer"}
+    }
+  },
+  "routing": {
+    "fallback_enabled": true,
+    "cache_responses": true,
+    "cache_ttl_seconds": 300,
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 100
+    }
+  },
+  "security": {
+    "sanitize_inputs": true,
+    "allowed_operations": ["SELECT", "INSERT", "UPDATE", "DELETE", "CREATE", "DROP"],
+    "blocked_keywords": ["TRUNCATE", "ALTER USER", "GRANT", "REVOKE"],
+    "max_query_length": 10000
+  },
+  "metadata": {
+    "author": "Skynet Lite Phase 2 Team",
+    "created": "2025-08-22T00:00:00Z",
+    "updated": "2025-08-22T00:00:00Z",
+    "tags": ["database", "sql", "sqlite", "postgresql", "mongodb", "data"],
+    "documentation_url": "https://docs.skynet-lite.ai/skills/database",
+    "examples": [
+      {
+        "name": "Simple Query",
+        "description": "Execute a simple SELECT query",
+        "code": "execute_query('SELECT * FROM users WHERE active = ?', {'active': True})"
+      },
+      {
+        "name": "Create Table",
+        "description": "Create a new table with schema",
+        "code": "create_table('products', {'id': 'INTEGER PRIMARY KEY', 'name': 'TEXT NOT NULL', 'price': 'REAL'})"
+      }
+    ]
+  }
+}

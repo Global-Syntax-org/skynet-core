@@ -1,0 +1,284 @@
+{
+  "skillId": "fileSystemSkill",
+  "name": "File System Operations Skill",
+  "description": "Comprehensive file and directory operations with search, monitoring, and management capabilities",
+  "version": "2.0.0",
+  "category": "system",
+  "priority": 85,
+  "dependencies": [],
+  "capabilities": [
+    "file_operations",
+    "directory_management",
+    "file_search",
+    "content_analysis",
+    "file_monitoring",
+    "compression",
+    "permission_management"
+  ],
+  "configuration": {
+    "default_workspace": "./workspace",
+    "max_file_size": 104857600,
+    "allowed_extensions": ["*"],
+    "blocked_extensions": [".exe", ".bat", ".cmd"],
+    "auto_create_dirs": true,
+    "backup_enabled": true
+  },
+  "functions": [
+    {
+      "name": "read_file",
+      "description": "Read file contents with encoding detection and chunked reading for large files",
+      "parameters": {
+        "file_path": {
+          "type": "string",
+          "description": "Path to the file to read",
+          "required": true
+        },
+        "encoding": {
+          "type": "string",
+          "description": "File encoding (auto-detect if not specified)",
+          "default": "auto"
+        },
+        "chunk_size": {
+          "type": "integer",
+          "description": "Chunk size for large files",
+          "default": 8192
+        },
+        "max_size": {
+          "type": "integer",
+          "description": "Maximum file size to read",
+          "default": 104857600
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "content": {"type": "string"},
+          "encoding": {"type": "string"},
+          "size": {"type": "integer"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "write_file",
+      "description": "Write content to file with backup and atomic operations",
+      "parameters": {
+        "file_path": {
+          "type": "string",
+          "description": "Path to the file to write",
+          "required": true
+        },
+        "content": {
+          "type": "string",
+          "description": "Content to write to the file",
+          "required": true
+        },
+        "encoding": {
+          "type": "string",
+          "description": "File encoding",
+          "default": "utf-8"
+        },
+        "create_backup": {
+          "type": "boolean",
+          "description": "Create backup of existing file",
+          "default": true
+        },
+        "atomic": {
+          "type": "boolean",
+          "description": "Use atomic write operation",
+          "default": true
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "bytes_written": {"type": "integer"},
+          "backup_created": {"type": "boolean"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "list_directory",
+      "description": "List directory contents with filtering and metadata",
+      "parameters": {
+        "directory_path": {
+          "type": "string",
+          "description": "Path to the directory to list",
+          "required": true
+        },
+        "recursive": {
+          "type": "boolean",
+          "description": "Include subdirectories recursively",
+          "default": false
+        },
+        "include_hidden": {
+          "type": "boolean",
+          "description": "Include hidden files and directories",
+          "default": false
+        },
+        "pattern": {
+          "type": "string",
+          "description": "File pattern filter (glob style)",
+          "default": "*"
+        },
+        "include_metadata": {
+          "type": "boolean",
+          "description": "Include file metadata (size, dates, permissions)",
+          "default": true
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "files": {"type": "array"},
+          "total_count": {"type": "integer"},
+          "total_size": {"type": "integer"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "search_files",
+      "description": "Search for files and content with advanced filtering",
+      "parameters": {
+        "search_path": {
+          "type": "string",
+          "description": "Root path to search from",
+          "required": true
+        },
+        "query": {
+          "type": "string",
+          "description": "Search query (filename or content)",
+          "required": true
+        },
+        "search_type": {
+          "type": "string",
+          "description": "Type of search to perform",
+          "enum": ["filename", "content", "both"],
+          "default": "both"
+        },
+        "case_sensitive": {
+          "type": "boolean",
+          "description": "Case-sensitive search",
+          "default": false
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results",
+          "default": 100
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "results": {"type": "array"},
+          "search_time": {"type": "number"},
+          "total_matches": {"type": "integer"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "compress_files",
+      "description": "Compress files and directories with multiple formats",
+      "parameters": {
+        "source_paths": {
+          "type": "array",
+          "description": "Paths to compress",
+          "required": true
+        },
+        "output_path": {
+          "type": "string",
+          "description": "Output archive path",
+          "required": true
+        },
+        "format": {
+          "type": "string",
+          "description": "Compression format",
+          "enum": ["zip", "tar", "tar.gz", "tar.bz2"],
+          "default": "zip"
+        },
+        "compression_level": {
+          "type": "integer",
+          "description": "Compression level (1-9)",
+          "default": 6
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "archive_path": {"type": "string"},
+          "archive_size": {"type": "integer"},
+          "compression_ratio": {"type": "number"},
+          "error": {"type": "string"}
+        }
+      }
+    }
+  ],
+  "signals": {
+    "file_read": {
+      "description": "Emitted when a file is successfully read",
+      "data": {"file_path": "string", "size": "integer", "encoding": "string"}
+    },
+    "file_written": {
+      "description": "Emitted when a file is successfully written",
+      "data": {"file_path": "string", "bytes_written": "integer"}
+    },
+    "directory_listed": {
+      "description": "Emitted when directory listing completes",
+      "data": {"directory_path": "string", "file_count": "integer"}
+    },
+    "search_completed": {
+      "description": "Emitted when file search completes",
+      "data": {"query": "string", "results_count": "integer", "search_time": "number"}
+    },
+    "compression_completed": {
+      "description": "Emitted when file compression completes",
+      "data": {"archive_path": "string", "compression_ratio": "number"}
+    },
+    "file_error": {
+      "description": "Emitted when file operation fails",
+      "data": {"operation": "string", "file_path": "string", "error": "string"}
+    }
+  },
+  "routing": {
+    "fallback_enabled": true,
+    "cache_responses": false,
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 200
+    }
+  },
+  "security": {
+    "sandbox_mode": true,
+    "allowed_paths": ["./workspace", "./data", "./temp"],
+    "blocked_paths": ["/etc", "/sys", "/proc", "/dev"],
+    "max_file_size": 104857600,
+    "virus_scan_enabled": false
+  },
+  "metadata": {
+    "author": "Skynet Lite Phase 2 Team",
+    "created": "2025-08-22T00:00:00Z",
+    "updated": "2025-08-22T00:00:00Z",
+    "tags": ["filesystem", "files", "directories", "search", "compression", "io"],
+    "documentation_url": "https://docs.skynet-lite.ai/skills/filesystem",
+    "examples": [
+      {
+        "name": "Read File",
+        "description": "Read a text file with encoding detection",
+        "code": "read_file('data/sample.txt', encoding='auto')"
+      },
+      {
+        "name": "Search Content",
+        "description": "Search for content within files",
+        "code": "search_files('./workspace', 'function', search_type='content')"
+      }
+    ]
+  }
+}

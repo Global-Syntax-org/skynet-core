@@ -1,0 +1,277 @@
+{
+  "skillId": "apiIntegrationSkill",
+  "name": "API Integration Skill",
+  "description": "Advanced API integration with REST, GraphQL, and webhook support",
+  "version": "2.0.0",
+  "category": "integration",
+  "priority": 80,
+  "dependencies": ["httpSkill"],
+  "capabilities": [
+    "rest_api_calls",
+    "graphql_queries",
+    "webhook_handling",
+    "api_authentication",
+    "rate_limiting",
+    "response_caching",
+    "api_monitoring"
+  ],
+  "configuration": {
+    "default_timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 1.0,
+    "cache_enabled": true,
+    "cache_ttl": 300,
+    "auth_storage": "secure"
+  },
+  "functions": [
+    {
+      "name": "call_rest_api",
+      "description": "Make REST API calls with authentication and response handling",
+      "parameters": {
+        "url": {
+          "type": "string",
+          "description": "API endpoint URL",
+          "required": true
+        },
+        "method": {
+          "type": "string",
+          "description": "HTTP method",
+          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+          "default": "GET"
+        },
+        "headers": {
+          "type": "object",
+          "description": "Request headers",
+          "default": {}
+        },
+        "params": {
+          "type": "object",
+          "description": "Query parameters",
+          "default": {}
+        },
+        "data": {
+          "type": "object",
+          "description": "Request body data",
+          "default": null
+        },
+        "auth": {
+          "type": "object",
+          "description": "Authentication configuration",
+          "default": null
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Request timeout in seconds",
+          "default": 30
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "status_code": {"type": "integer"},
+          "data": {"type": "object"},
+          "headers": {"type": "object"},
+          "response_time": {"type": "number"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "execute_graphql",
+      "description": "Execute GraphQL queries and mutations",
+      "parameters": {
+        "endpoint": {
+          "type": "string",
+          "description": "GraphQL endpoint URL",
+          "required": true
+        },
+        "query": {
+          "type": "string",
+          "description": "GraphQL query or mutation",
+          "required": true
+        },
+        "variables": {
+          "type": "object",
+          "description": "Query variables",
+          "default": {}
+        },
+        "auth": {
+          "type": "object",
+          "description": "Authentication configuration",
+          "default": null
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "data": {"type": "object"},
+          "errors": {"type": "array"},
+          "extensions": {"type": "object"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "register_webhook",
+      "description": "Register webhook endpoint for event handling",
+      "parameters": {
+        "webhook_url": {
+          "type": "string",
+          "description": "Webhook endpoint URL",
+          "required": true
+        },
+        "events": {
+          "type": "array",
+          "description": "Events to subscribe to",
+          "required": true
+        },
+        "secret": {
+          "type": "string",
+          "description": "Webhook secret for verification",
+          "default": null
+        },
+        "headers": {
+          "type": "object",
+          "description": "Custom headers for webhook requests",
+          "default": {}
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "webhook_id": {"type": "string"},
+          "verification_token": {"type": "string"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "batch_api_calls",
+      "description": "Execute multiple API calls in parallel with rate limiting",
+      "parameters": {
+        "requests": {
+          "type": "array",
+          "description": "Array of API request configurations",
+          "required": true
+        },
+        "max_concurrent": {
+          "type": "integer",
+          "description": "Maximum concurrent requests",
+          "default": 5
+        },
+        "delay_between": {
+          "type": "number",
+          "description": "Delay between requests in seconds",
+          "default": 0.1
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "results": {"type": "array"},
+          "total_requests": {"type": "integer"},
+          "successful_requests": {"type": "integer"},
+          "failed_requests": {"type": "integer"},
+          "total_time": {"type": "number"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "monitor_api_health",
+      "description": "Monitor API endpoint health and performance",
+      "parameters": {
+        "endpoints": {
+          "type": "array",
+          "description": "API endpoints to monitor",
+          "required": true
+        },
+        "check_interval": {
+          "type": "integer",
+          "description": "Check interval in seconds",
+          "default": 60
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Health check timeout",
+          "default": 10
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "monitoring_id": {"type": "string"},
+          "endpoints_status": {"type": "array"},
+          "error": {"type": "string"}
+        }
+      }
+    }
+  ],
+  "signals": {
+    "api_call_started": {
+      "description": "Emitted when API call begins",
+      "data": {"url": "string", "method": "string", "timestamp": "string"}
+    },
+    "api_call_completed": {
+      "description": "Emitted when API call completes",
+      "data": {"url": "string", "status_code": "integer", "response_time": "number"}
+    },
+    "api_call_failed": {
+      "description": "Emitted when API call fails",
+      "data": {"url": "string", "error": "string", "retry_count": "integer"}
+    },
+    "webhook_received": {
+      "description": "Emitted when webhook is received",
+      "data": {"webhook_id": "string", "event_type": "string", "payload_size": "integer"}
+    },
+    "rate_limit_hit": {
+      "description": "Emitted when rate limit is reached",
+      "data": {"endpoint": "string", "limit": "integer", "reset_time": "string"}
+    },
+    "api_health_change": {
+      "description": "Emitted when API health status changes",
+      "data": {"endpoint": "string", "status": "string", "response_time": "number"}
+    }
+  },
+  "routing": {
+    "fallback_enabled": true,
+    "cache_responses": true,
+    "cache_ttl_seconds": 300,
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 120
+    }
+  },
+  "security": {
+    "validate_certificates": true,
+    "allowed_domains": ["*"],
+    "blocked_domains": [],
+    "max_payload_size": 10485760,
+    "webhook_verification": true,
+    "auth_encryption": true
+  },
+  "metadata": {
+    "author": "Skynet Lite Phase 2 Team",
+    "created": "2025-08-22T00:00:00Z",
+    "updated": "2025-08-22T00:00:00Z",
+    "tags": ["api", "rest", "graphql", "webhooks", "integration", "http"],
+    "documentation_url": "https://docs.skynet-lite.ai/skills/api-integration",
+    "examples": [
+      {
+        "name": "REST API Call",
+        "description": "Make a simple REST API call",
+        "code": "call_rest_api('https://api.example.com/users', method='GET')"
+      },
+      {
+        "name": "GraphQL Query",
+        "description": "Execute a GraphQL query",
+        "code": "execute_graphql('https://api.example.com/graphql', query='{ users { id name } }')"
+      }
+    ]
+  }
+}
