@@ -1,0 +1,133 @@
+{
+  "skillId": "httpSkill",
+  "name": "HTTP Request Skill",
+  "description": "Core skill for making HTTP requests with intelligent routing and fallback",
+  "version": "1.0.0",
+  "category": "core",
+  "priority": 100,
+  "dependencies": [],
+  "capabilities": [
+    "http_get",
+    "http_post",
+    "http_put",
+    "http_delete",
+    "json_parsing",
+    "error_handling",
+    "retry_logic"
+  ],
+  "configuration": {
+    "timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 1.0,
+    "user_agent": "SkynetLite-HttpSkill/1.0",
+    "follow_redirects": true,
+    "verify_ssl": true
+  },
+  "functions": [
+    {
+      "name": "make_request",
+      "description": "Execute HTTP request with automatic retry and error handling",
+      "parameters": {
+        "url": {
+          "type": "string",
+          "description": "Target URL for the HTTP request",
+          "required": true
+        },
+        "method": {
+          "type": "string",
+          "description": "HTTP method (GET, POST, PUT, DELETE)",
+          "default": "GET",
+          "enum": ["GET", "POST", "PUT", "DELETE", "PATCH"]
+        },
+        "headers": {
+          "type": "object",
+          "description": "HTTP headers to include",
+          "default": {}
+        },
+        "data": {
+          "type": "object",
+          "description": "Request payload for POST/PUT operations",
+          "default": null
+        },
+        "params": {
+          "type": "object",
+          "description": "URL parameters for GET requests",
+          "default": {}
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "status_code": {"type": "integer"},
+          "data": {"type": "object"},
+          "headers": {"type": "object"},
+          "success": {"type": "boolean"},
+          "error": {"type": "string"}
+        }
+      }
+    },
+    {
+      "name": "download_file",
+      "description": "Download file from URL with progress tracking",
+      "parameters": {
+        "url": {
+          "type": "string",
+          "description": "URL of file to download",
+          "required": true
+        },
+        "destination": {
+          "type": "string",
+          "description": "Local path to save the file",
+          "required": true
+        },
+        "chunk_size": {
+          "type": "integer",
+          "description": "Download chunk size in bytes",
+          "default": 8192
+        }
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean"},
+          "file_size": {"type": "integer"},
+          "download_time": {"type": "number"},
+          "error": {"type": "string"}
+        }
+      }
+    }
+  ],
+  "signals": {
+    "request_started": {
+      "description": "Emitted when HTTP request begins",
+      "data": {"url": "string", "method": "string"}
+    },
+    "request_completed": {
+      "description": "Emitted when HTTP request completes",
+      "data": {"status_code": "integer", "duration": "number"}
+    },
+    "request_failed": {
+      "description": "Emitted when HTTP request fails",
+      "data": {"error": "string", "retry_count": "integer"}
+    },
+    "download_progress": {
+      "description": "Emitted during file download progress",
+      "data": {"bytes_downloaded": "integer", "total_bytes": "integer", "percentage": "number"}
+    }
+  },
+  "routing": {
+    "fallback_enabled": true,
+    "cache_responses": false,
+    "rate_limiting": {
+      "enabled": false,
+      "requests_per_minute": 60
+    }
+  },
+  "metadata": {
+    "author": "Skynet Lite Core Team",
+    "created": "2024-01-01T00:00:00Z",
+    "updated": "2024-01-01T00:00:00Z",
+    "tags": ["http", "networking", "core", "requests"],
+    "documentation_url": "https://docs.skynet-lite.ai/skills/http"
+  }
+}

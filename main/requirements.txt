@@ -1,0 +1,31 @@
+# Semantic Kernel Phase 1 Requirements
+# Core dependencies for skill orchestration
+
+# HTTP and async support
+aiohttp>=3.9.0
+aiofiles>=23.0.0
+asyncio-mqtt>=0.16.0
+
+# Data processing and validation
+pydantic>=2.5.0
+dataclasses-json>=0.6.0
+
+# Configuration and logging
+python-dotenv>=1.0.0
+structlog>=23.2.0
+
+# AI/ML providers (as fallback chain)
+openai>=1.6.0
+anthropic>=0.7.0
+google-generativeai>=0.3.0
+
+# Existing Skynet dependencies (maintain compatibility)
+semantic-kernel>=0.4.0
+requests>=2.31.0
+python-decouple>=3.8
+
+# Development and testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+black>=23.0.0
+mypy>=1.7.0
