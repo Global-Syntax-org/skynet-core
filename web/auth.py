@@ -38,18 +38,30 @@ class AuthManager:
     
     def init_database(self):
         """Initialize SQLite database with privacy-focused schema"""
+        # Create tables if missing and apply safe migrations for existing DBs
         with sqlite3.connect(self.db_path) as conn:
+            # Create users table if it doesn't exist (new installs will include last_login)
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT UNIQUE NOT NULL,
                     password_hash TEXT NOT NULL,
                     email TEXT,  -- Optional for account recovery
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    last_login TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
-            
+
+            # Ensure last_login column exists for older databases
+            try:
+                cur = conn.execute("PRAGMA table_info(users)")
+                cols = [r[1] for r in cur.fetchall()]
+                if 'last_login' not in cols:
+                    # Safe to add a column in SQLite; existing rows will have NULL
+                    conn.execute("ALTER TABLE users ADD COLUMN last_login TIMESTAMP")
+            except Exception:
+                # If PRAGMA or ALTER fails, continue; other DB calls will raise later if necessary
+                pass
+
             # Password reset tokens table
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS password_reset_tokens (
@@ -62,7 +74,7 @@ class AuthManager:
                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
                 )
             """)
-            
+
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS user_conversations (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -73,13 +85,13 @@ class AuthManager:
                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
                 )
             """)
-            
+
             # Create index for better performance
             conn.execute("""
                 CREATE INDEX IF NOT EXISTS idx_user_conversations_user_id 
                 ON user_conversations(user_id, timestamp DESC)
             """)
-            
+
             conn.commit()
     
     def hash_password(self, password: str) -> str:
