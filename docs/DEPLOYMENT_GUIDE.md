@@ -1,13 +1,14 @@
-# Skynet Lite Deployment Guide
+# Skynet Core Deployment Guide
 
 ## Production Deployment
 
 ### Prerequisites
 
 - Python 3.10+
-- Ollama (for local LLM support)
+- **Recommended**: Ollama (for local LLM support)
+- **Alternative**: Cloud AI provider API keys
 - 4GB+ RAM recommended
-- 10GB+ disk space for models
+- 10GB+ disk space for local models (if using Ollama)
 
 ### Environment Setup
 
@@ -27,20 +28,23 @@
    nano .env
    ```
 
-   **Required Variables:**
+   **Core Configuration Options:**
    ```bash
-   # Ollama Configuration
-   # Note: OLLAMA_BASE_URL is deprecated in favor of package-based configuration.
-   # Configure the model name using OLLAMA_MODEL and use `skynet.config` for advanced settings.
-   # If you run Ollama on a custom URL, you may still set OLLAMA_BASE_URL.
+   # Storage Backend (SQLite is default)
+   SKYNET_STORAGE_TYPE=sqlite  # or mssql, file, memory
+   
+   # Local AI (Primary - Ollama)
+   OLLAMA_BASE_URL=http://localhost:11434
    OLLAMA_MODEL=mistral
    
-   # Optional: API Keys for fallback models
+   # Cloud AI Fallbacks (Optional)
    OPENAI_API_KEY=your_openai_key
    ANTHROPIC_API_KEY=your_claude_key
    GEMINI_API_KEY=your_gemini_key
+   GITHUB_COPILOT_TOKEN=your_copilot_token
+   MICROSOFT_COPILOT_API_KEY=your_ms_copilot_key
    
-   # Optional: Search Provider Keys
+   # Web Search Providers (Optional)
    AZURE_SEARCH_KEY=your_azure_key
    AZURE_SEARCH_ENDPOINT=your_azure_endpoint
    GOOGLE_API_KEY=your_google_key
@@ -51,7 +55,48 @@
    FLASK_SECRET_KEY=your_secret_key_here
    ```
 
-3. **Install and Configure Ollama**
+## Deployment Modes
+
+### Mode 1: Local-Only (Privacy-First)
+**Best for**: Privacy-sensitive environments, offline operation, development
+
+```bash
+# Setup Ollama
+ollama serve
+ollama pull mistral
+
+# No API keys needed - runs completely local
+python3 main.py
+```
+
+### Mode 2: Hybrid (Recommended)
+**Best for**: Production environments with fallback reliability
+
+```bash
+# Setup local Ollama (primary)
+ollama serve
+ollama pull mistral
+
+# Configure cloud fallbacks in .env
+OPENAI_API_KEY=your_key
+ANTHROPIC_API_KEY=your_key
+
+python3 main.py
+```
+
+### Mode 3: Cloud-Only
+**Best for**: Serverless deployments, maximum model capabilities
+
+```bash
+# Configure cloud providers in .env (no Ollama needed)
+OPENAI_API_KEY=your_key
+ANTHROPIC_API_KEY=your_key
+GEMINI_API_KEY=your_key
+
+python3 main.py
+```
+
+3. **Install and Configure Ollama (for Local/Hybrid modes)**
    ```bash
    # Install Ollama (Linux)
    curl -fsSL https://ollama.com/install.sh | sh

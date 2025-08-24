@@ -1,10 +1,10 @@
-# Skynet Lite Documentation Index
+# Skynet Core Documentation Index
 
-Welcome to the Skynet Lite documentation! This index helps you find the right documentation for your needs.
+Welcome to the Skynet Core documentation! This index helps you find the right documentation for your needs.
 
 ## Quick Start
 
-**New to Skynet Lite?** Start here:
+**New to Skynet Core?** Start here:
 1. [User Guide](docs/USER_GUIDE.md) - Complete guide for end users
 2. [Installation](README.md#quick-start) - Get up and running in 5 minutes
 3. [Web Interface Tutorial](docs/USER_GUIDE.md#using-the-web-interface) - Using the browser interface
@@ -35,7 +35,7 @@ Welcome to the Skynet Lite documentation! This index helps you find the right do
 - [Development Setup](CONTRIBUTING.md#development-setup) - Developer environment
 - [Production Deployment](docs/DEPLOYMENT_GUIDE.md) - Production setup
 
-### Using Skynet Lite
+### Using Skynet Core
 - [Web Interface Guide](docs/USER_GUIDE.md#using-the-web-interface) - Browser-based chat
 - [Console Interface](docs/USER_GUIDE.md#using-the-console-interface) - Command-line usage
 - [Configuration Options](docs/USER_GUIDE.md#configuration) - Customizing behavior
@@ -45,8 +45,15 @@ Welcome to the Skynet Lite documentation! This index helps you find the right do
 - [API Reference](docs/API_REFERENCE.md) - Complete API docs
 - [Architecture Overview](docs/PROJECT_OVERVIEW.md) - System design
 - [Model Loaders](docs/API_REFERENCE.md#loaderclassemanager) - AI provider interfaces
+- [Storage Abstraction](docs/STORAGE_ABSTRACTION.md) - Storage backend options and configuration
+- [MSSQL Usage Guide](docs/MSSQL_USAGE_GUIDE.md) - Microsoft SQL Server integration
 - [GitHub Copilot Integration](docs/COPILOT_INTEGRATION.md) - Copilot setup and configuration
 - [Microsoft Copilot Integration](docs/MICROSOFT_COPILOT_INTEGRATION.md) - Microsoft AI assistant setup
+-
+Note: this project includes two separate Copilot integrations:
+
+- GitHub Copilot (requires `GITHUB_COPILOT_TOKEN` and an internal `COPILOT_API_URL` proxy). See `docs/COPILOT_INTEGRATION.md`.
+- Microsoft Copilot (uses `MICROSOFT_COPILOT_API_KEY` and `MICROSOFT_COPILOT_ENDPOINT`). See `docs/MICROSOFT_COPILOT_INTEGRATION.md`.
 - [Web Search Integration](docs/PROJECT_OVERVIEW.md#web-search-tools) - Search providers
 
 ### Development
@@ -57,15 +64,39 @@ Welcome to the Skynet Lite documentation! This index helps you find the right do
 
 ### Operations & Deployment
 - [Production Deployment](docs/DEPLOYMENT_GUIDE.md#production-deployment) - Server setup
+- [Deployment Modes](docs/DEPLOYMENT_GUIDE.md#deployment-modes) - Local, hybrid, and cloud deployment options
 - [Docker Deployment](docs/DEPLOYMENT_GUIDE.md#option-2-docker-deployment) - Container deployment
 - [Monitoring & Logging](docs/DEPLOYMENT_GUIDE.md#monitoring-and-logging) - Operational monitoring
 - [Security Considerations](docs/DEPLOYMENT_GUIDE.md#security-considerations) - Security best practices
 
+## Deployment Modes
+
+Skynet Core supports three main deployment modes:
+
+### 🏠 Local-Only Mode
+- **Privacy**: All processing happens locally
+- **Requirements**: Ollama + local models
+- **Use Cases**: Sensitive data, offline environments
+- **Setup**: [Local deployment guide](docs/DEPLOYMENT_GUIDE.md#mode-1-local-only-privacy-first)
+
+### 🌩️ Hybrid Mode (Recommended)
+- **Reliability**: Local processing with cloud fallbacks
+- **Requirements**: Ollama + optional cloud API keys
+- **Use Cases**: Production environments with backup reliability
+- **Setup**: [Hybrid deployment guide](docs/DEPLOYMENT_GUIDE.md#mode-2-hybrid-recommended)
+
+### ☁️ Cloud-Only Mode
+- **Scalability**: Enterprise cloud AI without local dependencies
+- **Requirements**: Cloud AI provider API keys
+- **Use Cases**: Serverless deployments, maximum capabilities
+- **Setup**: [Cloud deployment guide](docs/DEPLOYMENT_GUIDE.md#mode-3-cloud-only)
+
 ## Features & Capabilities
 
 ### Core Features
-- **Local AI Processing** - Privacy-first AI with Ollama
-- **Multi-Model Support** - OpenAI, Claude, Gemini, Copilot fallbacks
+- **Hybrid AI Processing** - Local-first with cloud fallback architecture
+- **Storage Abstraction** - SQLite, MSSQL, file, and memory backends
+- **Multi-Model Support** - Ollama (local) + OpenAI, Claude, Gemini, Copilot fallbacks
 - **Web Search Integration** - DuckDuckGo, Azure, Google search
 - **Memory Management** - Conversation context and history
 - **Dual Interfaces** - Web browser and console interfaces
