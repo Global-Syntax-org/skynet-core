@@ -2,18 +2,17 @@
 
 - **Current Version**: 2.0.0-core
 
-A cloud-first AI chatbot powered by multiple AI providers with advanced web search capabilities. Built for enterprise deployment, multi-model intelligence, and scalable cloud architecture without local dependencies.
+A hybrid AI chatbot with local-first processing and cloud fallback capabilities. Features advanced web search, enterprise storage options, and multi-model intelligence for both local privacy and cloud scalability.
 
 ## ✨ Features
 
-- **☁️ Cloud-First AI Processing** - Multiple enterprise AI providers with intelligent fallback
-- **🔍 Advanced Web Search** - DuckDuckGo integration with optional Azure Search and Google Custom Search
-- **💾 Persistent Memory** - Enterprise-grade conversation history and context management
+- **🧠 Local-First AI Processing** - Ollama integration with intelligent cloud provider fallback
+- **� Flexible Storage** - SQLite default with optional MSSQL, file, and memory backends
 - **🌐 Modern Web Interface** - Responsive Flask-based web UI with real-time chat
 - **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
-- **🏢 Enterprise Ready** - Scalable, secure, cloud-native deployment
+- **🏢 Enterprise Ready** - Scalable storage and cloud provider options
 - **🚀 High Performance** - Async architecture with concurrent AI processing
-- **🎯 Multi-Model Intelligence** - Seamless switching between AI providers
+- **🎯 Multi-Model Intelligence** - Seamless switching between local and cloud AI providers
 - **🔄 Smart Fallback** - Automatic provider switching for maximum reliability
 - **🛠️ Development Tools** - Comprehensive testing and diagnostic utilities
 
@@ -22,7 +21,8 @@ A cloud-first AI chatbot powered by multiple AI providers with advanced web sear
 ### Prerequisites
 
 - Python 3.10+
-- At least one cloud AI provider API key (OpenAI, Claude, Gemini, etc.)
+- **Option A (Local)**: [Ollama](https://ollama.com/download) installed and running
+- **Option B (Cloud)**: At least one cloud AI provider API key (OpenAI, Claude, Gemini, etc.)
 
 ### Installation
 
@@ -30,7 +30,6 @@ A cloud-first AI chatbot powered by multiple AI providers with advanced web sear
    ```bash
    git clone https://github.com/StuxnetStudios/skynet-lite.git
    cd skynet-lite
-   git checkout feature/skynet-core
    ```
 
 2. **Run the setup script**
@@ -42,7 +41,16 @@ A cloud-first AI chatbot powered by multiple AI providers with advanced web sear
    - Install all dependencies
    - Verify system requirements
 
-3. **Configure your AI provider**
+3. **Configure your setup (choose one)**
+   
+   **Option A - Local AI (Recommended)**
+   ```bash
+   # Start Ollama and pull a model
+   ollama serve
+   ollama pull mistral
+   ```
+   
+   **Option B - Cloud AI**
    ```bash
    cp .env.example .env
    # Edit .env and add at least one API key
@@ -62,60 +70,109 @@ A cloud-first AI chatbot powered by multiple AI providers with advanced web sear
    # Open http://localhost:5000 in your browser
    ```
 
+> **Note**: Skynet Core automatically tries Ollama first, then falls back to configured cloud providers if needed.
+   python3 run.py
+   # Open http://localhost:5000 in your browser
+   ```
+
 ## 🏗️ Architecture
 
 ```
-skynet-lite/
+skynet-core/
 ├── main.py              # Entry point and chat orchestration
-├── config.py            # Configuration management
-├── setup.py             # Setup and dependency verification
+├── skynet/              # Core package
+│   ├── assistant.py     # Main orchestrator and chat loop
+│   ├── config.py        # Configuration management
+│   ├── loader_manager.py # AI provider management with fallback
+│   ├── memory.py        # Conversation memory
+│   └── storage/         # Storage abstraction layer
+│       ├── base.py      # Abstract storage interface
+│       ├── sqlite_adapter.py # SQLite storage (default)
+│       ├── mssql_adapter.py  # Microsoft SQL Server
+│       ├── file_adapter.py   # JSON file storage
+│       ├── memory_adapter.py # In-memory storage
+│       └── manager.py   # Storage adapter factory
+├── loaders/             # AI provider implementations
+│   ├── ollama_loader.py # Local Ollama integration
+│   ├── openai_loader.py # OpenAI API
+│   ├── claude_loader.py # Anthropic Claude
+│   ├── gemini_loader.py # Google Gemini
+│   └── *_copilot_loader.py # GitHub/Microsoft Copilot
 ├── web/                 # Web UI interface
 │   ├── app.py           # Flask web application
 │   ├── run.py           # Web UI launcher
 │   ├── templates/       # HTML templates
 │   └── static/          # CSS and static assets
-├── models/
-│   └── loader.py        # Ollama model interface
 ├── tools/
-│   └── web_search.py    # DuckDuckGo + Azure Search + Google Custom Search integration
+│   └── web_search.py    # Web search integration
 └── plugins/
     └── memory.py        # Conversation memory management
 ```
 
 ## 🔧 Configuration
 
-Skynet Lite supports multiple configuration methods:
+Skynet Core supports multiple configuration methods with automatic fallback:
+
+### AI Provider Priority Order
+
+1. **Ollama (Local)** - Tried first if available
+2. **OpenAI** - Cloud fallback if API key provided
+3. **Google Gemini** - Advanced multimodal capabilities
+4. **Anthropic Claude** - Advanced reasoning
+5. **GitHub Copilot** - Developer assistance
+6. **Microsoft Copilot** - Enterprise AI
+7. **Local Fallback** - Basic responses if all else fails
 
 ### Environment Variables
 
-Copy `.env.example` to `.env` and configure your API keys:
+Copy `.env.example` to `.env` and configure your preferences:
 ```bash
 cp .env.example .env
 ```
 
-**Primary AI Models (Choose at least one):**
+**Storage Configuration:**
 ```bash
-# OpenAI (Recommended)
+# Storage backend (default: sqlite)
+export SKYNET_STORAGE_TYPE="sqlite"  # or mssql, file, memory
+
+# SQLite settings (default)
+export SQLITE_DATABASE="data/skynet.db"
+
+# MSSQL settings (optional)
+export MSSQL_SERVER="localhost"
+export MSSQL_DATABASE="skynet_core"
+export MSSQL_USERNAME="sa"
+export MSSQL_PASSWORD="your_password"
+```
+
+**Local AI (Primary):**
+```bash
+# Ollama (tried first)
+export OLLAMA_BASE_URL="http://localhost:11434"
+export OLLAMA_MODEL="mistral"
+```
+
+**Cloud AI (Fallbacks - Optional):**
+```bash
+# OpenAI
 export OPENAI_API_KEY="<your_openai_api_key>"
 export OPENAI_MODEL="gpt-3.5-turbo"
 
-# Anthropic Claude (Advanced reasoning)
+# Anthropic Claude
 export ANTHROPIC_API_KEY="<your_anthropic_api_key>"
 export ANTHROPIC_MODEL="claude-3-sonnet-20240229"
 
-# Google Gemini (Multimodal AI)
+# Google Gemini
 export GOOGLE_API_KEY="<your_google_api_key>"
 export GEMINI_MODEL="gemini-pro"
 
-# GitHub Copilot (Developer assistant - Requires Enterprise)
+# GitHub Copilot (Developer assistant)
 export GITHUB_COPILOT_TOKEN="<your_github_copilot_token>"
 export COPILOT_API_URL="<your_copilot_endpoint_url>"
-export COPILOT_MODEL="copilot"
 
-# Microsoft Copilot (Enterprise AI - Requires Azure)
+# Microsoft Copilot (Enterprise AI)
 export MICROSOFT_COPILOT_API_KEY="<your_microsoft_api_key>"
 export MICROSOFT_COPILOT_ENDPOINT="<your_azure_endpoint>"
-export MICROSOFT_COPILOT_MODEL="copilot"
 ```
 
 **Web Search Providers:**
