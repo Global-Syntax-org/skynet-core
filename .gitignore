@@ -14,3 +14,4 @@ cookies.txt
 # Local DB files
 *.db
 web/*.db
+website/
