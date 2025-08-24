@@ -46,7 +46,7 @@ async def demo_copilot_coding_assistance():
         return
     
     try:
-        from loaders.copilot_loader import CopilotModelLoader
+        from loaders.github_copilot_loader import GitHubCopilotModelLoader as CopilotModelLoader
         
         # Initialize Copilot
         copilot = CopilotModelLoader()

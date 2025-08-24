@@ -50,7 +50,8 @@ class StorageManager:
                 "server": "localhost",
                 "database": "skynet_lite",
                 "driver": "ODBC Driver 17 for SQL Server",
-                "trusted_connection": True,
+                # Do not assume Windows trusted auth by default; prefer explicit opt-in
+                "trusted_connection": False,
                 "encrypt": True,
                 "trust_server_certificate": False,
                 "connection_timeout": 30,

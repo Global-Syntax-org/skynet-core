@@ -1,0 +1,70 @@
+name: CI - MSSQL Integration Tests
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  mssql-integration:
+    name: MSSQL integration tests (manual)
+    runs-on: ubuntu-latest
+    env:
+      MSSQL_TEST_SERVER: 127.0.0.1
+      MSSQL_TEST_DATABASE: master
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start SQL Server container
+        env:
+          SA_PASSWORD: ${{ secrets.MSSQL_SA_PASSWORD }}
+        run: |
+          if [ -z "${SA_PASSWORD}" ]; then
+            echo "Missing MSSQL_SA_PASSWORD secret. Add it to run this job."; exit 1
+          fi
+          docker run -e 'ACCEPT_EULA=Y' -e "MSSQL_SA_PASSWORD=${SA_PASSWORD}" -p 1433:1433 -d --name mssql-test mcr.microsoft.com/mssql/server:2019-latest
+
+      - name: Wait for SQL Server to be ready
+        run: |
+          echo "Waiting for SQL Server to become available..."
+          for i in {1..30}; do
+            sleep 5
+            if docker logs mssql-test 2>&1 | grep -q "SQL Server is now ready for client connections"; then
+              echo "SQL Server ready"; break
+            fi
+            echo "Waiting... ($i)"
+          done
+
+      - name: Install system ODBC dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnupg2 curl apt-transport-https
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get update
+          ACCEPT_EULA=Y sudo apt-get install -y msodbcsql17 unixodbc-dev
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyodbc aioodbc pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt || true; fi
+
+      - name: Run MSSQL integration tests
+        env:
+          MSSQL_TEST_SERVER: 127.0.0.1
+          MSSQL_TEST_DATABASE: master
+          MSSQL_TEST_USERNAME: sa
+          MSSQL_TEST_PASSWORD: ${{ secrets.MSSQL_SA_PASSWORD }}
+        run: |
+          python -m pytest -q tests/test_storage_mssql.py
+
+      - name: Cleanup container
+        if: always()
+        run: |
+          docker rm -f mssql-test || true

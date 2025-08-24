@@ -53,7 +53,7 @@ async def test_copilot_loader():
     # Test loader import
     print("\n2. Testing Loader Import...")
     try:
-        from loaders.copilot_loader import CopilotModelLoader
+        from loaders.github_copilot_loader import GitHubCopilotModelLoader as CopilotModelLoader
         print("✅ CopilotModelLoader imported successfully")
     except ImportError as e:
         print(f"❌ Failed to import CopilotModelLoader: {e}")
