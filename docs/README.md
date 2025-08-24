@@ -45,6 +45,8 @@ Welcome to the Skynet Lite documentation! This index helps you find the right do
 - [API Reference](docs/API_REFERENCE.md) - Complete API docs
 - [Architecture Overview](docs/PROJECT_OVERVIEW.md) - System design
 - [Model Loaders](docs/API_REFERENCE.md#loaderclassemanager) - AI provider interfaces
+- [GitHub Copilot Integration](docs/COPILOT_INTEGRATION.md) - Copilot setup and configuration
+- [Microsoft Copilot Integration](docs/MICROSOFT_COPILOT_INTEGRATION.md) - Microsoft AI assistant setup
 - [Web Search Integration](docs/PROJECT_OVERVIEW.md#web-search-tools) - Search providers
 
 ### Development
