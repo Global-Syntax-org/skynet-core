@@ -14,4 +14,4 @@ cookies.txt
 # Local DB files
 *.db
 web/*.db
-website/
+ # website/ removed to track the site in the repo
