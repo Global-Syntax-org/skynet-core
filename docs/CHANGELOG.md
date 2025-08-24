@@ -8,11 +8,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- Voice interface integration
-- Docker containerization 
-- WebSocket support for real-time chat
-- Plugin marketplace
-- API authentication and rate limiting
+
+## [2.0.0] - 2025-08-24
+
+### Added
+- Records retention core: policy engine integration and lifecycle APIs
+- MSSQL compliance adapter with schema updates and retention rules test harness
+- Retention plugin templates and sample workflows for common archival patterns
+- Export tooling: certified export formats, audit trails, and tamper-evident logs
+
+### Changed
+- Refactor: retention-first processing pipeline and simplified plugin interface
+- Default configuration hardened: credentials now read from environment only; examples updated
+- Improved search result formatting and extractor pipelines for retention workflows
+
+### Fixed
+- Fixed data persistence edge-cases during concurrent archival and purge operations
+- Resolved race conditions in cleanup/archival tasks
+- Prevent accidental logging of sensitive configuration values
+
 
 ## [1.4.1] - 2025-08-16
 
@@ -220,10 +234,10 @@ class PluginProtocol(Protocol):
 - **Data Locality**: Conversation history stored locally
 - **Secure Defaults**: Conservative configuration defaults
 
-### Robotics Integration
-- **ROS Compatibility**: Designed for ROS node integration
-- **Webots Support**: Controller integration patterns
-- **Real-time Processing**: Optimized for robotics response times
+### Records Retention Integration
+- **Policy Compatibility**: Designed for records retention and policy integration
+- **Lifecycle Support**: Patterns for record lifecycle and archival
+- **Real-time Processing**: Optimized for retention workflows and purge automation
 - **Resource Constraints**: Efficient resource usage
 
 ### Quality Assurance
@@ -232,4 +246,4 @@ class PluginProtocol(Protocol):
 - **CI/CD Pipeline**: Automated testing and quality checks
 - **Documentation**: Comprehensive API and architecture documentation
 
-This release establishes Skynet Lite as a robust, modular AI chatbot system with strong privacy protections, comprehensive testing, and robotics integration capabilities.
+This release establishes Skynet Lite as a robust, modular AI chatbot system with strong privacy protections, comprehensive testing, and records retention integration capabilities.
