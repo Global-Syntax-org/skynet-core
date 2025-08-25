@@ -1,4 +1,4 @@
-# Skynet Lite Changelog
+# Skynet Core Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactor: retention-first processing pipeline and simplified plugin interface
 - Default configuration hardened: credentials now read from environment only; examples updated
 - Improved search result formatting and extractor pipelines for retention workflows
+- Project rename: Skynet Lite -> Skynet Core. Legacy SQLite file `skynet_lite.db` auto-migrated to `skynet_core.db` on first run; MSSQL default database name changed to `skynet_core`.
 
 ### Fixed
 - Fixed data persistence edge-cases during concurrent archival and purge operations
@@ -156,7 +157,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Architecture
 ```
-skynet-lite/
+skynet-core/
+```
+
+## [1.4.1] - 2025-08-16
 ├── main.py              # Entry point and chat orchestration
 ├── skynet/config.py     # Configuration management
 ├── requirements.txt     # Dependencies

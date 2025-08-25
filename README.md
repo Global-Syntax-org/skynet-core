@@ -28,8 +28,8 @@ A hybrid AI chatbot with local-first processing and cloud fallback capabilities.
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/StuxnetStudios/skynet-lite.git
-   cd skynet-lite
+   git clone https://github.com/StuxnetStudios/skynet-core.git
+   cd skynet-core
    ```
 
 2. **Run the setup script**
@@ -205,7 +205,7 @@ memory:
 ### Basic Chat
 ```
 You: Hello, what can you help me with?
-🤖 Skynet: I'm Skynet Lite, your local AI assistant! I can help with...
+🤖 Skynet: I'm Skynet Core, your local AI assistant! I can help with...
 ```
 
 ### Web Search Queries
@@ -231,11 +231,11 @@ python3 demo_copilot.py
 
 ## 🧩 Plugin Development
 
-Skynet Lite uses a modular plugin architecture. Create new plugins by extending the base patterns:
+Skynet Core uses a modular plugin architecture. Create new plugins by extending the base patterns:
 
 ```python
 class CustomPlugin:
-    """Custom plugin following Skynet Lite patterns"""
+    """Custom plugin following Skynet Core patterns"""
     
     def __init__(self, config: Config):
         self.config = config
@@ -251,28 +251,19 @@ class CustomPlugin:
 
 ## 🤝 Integration
 
-### ROS Integration
+### Records Retention Integration
 ```python
-# Example ROS node integration
-import rospy
-from skynet_lite import SkynetLite
+# Example records retention integration
+# Use the records retention plugin to manage record lifecycles and retention policies
+from skynet_core import SkynetCore
 
-class SkynetRosNode:
+class RetentionManager:
     def __init__(self):
-        self.skynet = SkynetLite()
-        rospy.init_node('skynet_lite')
-```
-
-### Webots Integration
-```python
-# Example Webots controller integration
-from controller import Robot
-from skynet_lite import SkynetLite
-
-class SkynetController(Robot):
-    def __init__(self):
-        super().__init__()
-        self.skynet = SkynetLite()
+        self.skynet = SkynetCore()
+    
+    def apply_policy(self, record_id: str):
+        """Apply retention policy to a record"""
+        # ...implementation placeholder...
 ```
 
 ## 🧪 Testing
@@ -368,9 +359,9 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [x] Multi-model support (OpenAI, Claude, Gemini, Copilot)
 - [x] DuckDuckGo search integration
 - [x] Flask web interface with diagnostics
-- [ ] Voice interface integration
-- [ ] Advanced robotics control plugins
-- [ ] Swarm intelligence coordination
+ - [ ] Voice interface integration
+ - [ ] Advanced records retention plugins
+ - [ ] Workflow and coordination for retention policies
 - [ ] Custom training pipeline
 - [ ] Docker containerization
 - [ ] API authentication and rate limiting
@@ -379,4 +370,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Made with ❤️ for the robotics and AI community**
+ **Made with ❤️ for the records management and AI community**

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-run.py - safe Python launcher for Skynet Lite web app
+run.py - safe Python launcher for Skynet Core web app
 
 Behaviors:
 - checks for an existing listener on TCP/5000 and verifies its commandline
@@ -74,8 +74,8 @@ def main():
     pid = find_listener_pid(5000)
     if pid:
         print(f'Found listener PID: {pid}')
-        # only kill if it looks like our app (contains web/app.py or skynet-lite)
-        if cmdline_contains(pid, 'web/app.py') or cmdline_contains(pid, 'skynet-lite') or cmdline_contains(pid, '.venv'):
+        # only kill if it looks like our app (contains web/app.py or skynet-core)
+        if cmdline_contains(pid, 'web/app.py') or cmdline_contains(pid, 'skynet-core') or cmdline_contains(pid, '.venv'):
             print(f'Killing PID {pid} (graceful then force)')
             ok = kill_pid(pid)
             if not ok:

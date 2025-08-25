@@ -2,7 +2,7 @@
 Example usage of the storage abstraction layer with MSSQL
 
 This script demonstrates how to configure and use MSSQL storage
-for Skynet Lite data persistence.
+for Skynet Core data persistence.
 """
 
 import asyncio
@@ -22,7 +22,7 @@ async def demo_mssql_storage():
         "type": "mssql",
         "config": {
             "server": "localhost",  # or your SQL Server instance
-            "database": "skynet_lite",
+            "database": "skynet_core",
             "username": "skynet_user",  # optional for Windows auth
             "password": "your_password",  # optional for Windows auth
             "trusted_connection": False,  # set to True for Windows auth
@@ -105,7 +105,7 @@ async def demo_fallback_storage():
             "type": "mssql",
             "config": {
                 "server": "nonexistent_server",
-                "database": "skynet_lite",
+                "database": "skynet_core",
                 "trusted_connection": True
             }
         },
@@ -137,7 +137,7 @@ async def demo_fallback_storage():
 
 async def main():
     """Main demo function"""
-    logger.info("🚀 Skynet Lite Storage Abstraction Demo")
+    logger.info("🚀 Skynet Core Storage Abstraction Demo")
     logger.info("=" * 50)
     
     # Demo MSSQL (if available)

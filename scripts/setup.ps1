@@ -25,8 +25,8 @@ Write-Host "✅ Initial commit created" -ForegroundColor Green
 
 # Set up remote instructions
 Write-Host "🔗 To connect to GitHub:" -ForegroundColor Yellow
-Write-Host "1. Create a new repository on GitHub named 'skynet-lite'" -ForegroundColor White
-Write-Host "2. Run: git remote add origin https://github.com/yourusername/skynet-lite.git" -ForegroundColor White
+Write-Host "1. Create a new repository on GitHub named 'skynet-core'" -ForegroundColor White
+Write-Host "2. Run: git remote add origin https://github.com/yourusername/skynet-core.git" -ForegroundColor White
 Write-Host "3. Run: git branch -M main" -ForegroundColor White
 Write-Host "4. Run: git push -u origin main" -ForegroundColor White
 

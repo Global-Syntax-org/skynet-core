@@ -1,4 +1,4 @@
-"""Conversation memory management for Skynet Lite."""
+"""Conversation memory management for Skynet Core."""
 
 
 class MemoryManager:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-stop.py - graceful stopper for Skynet Lite web app started by run.py/run.sh
+stop.py - graceful stopper for Skynet Core web app started by run.py/run.sh
 
 Behavior:
 - reads pid from /tmp/skynet_web.pid (if present)
@@ -97,7 +97,7 @@ def tail_logs(lines=40):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Gracefully stop Skynet Lite web server')
+    parser = argparse.ArgumentParser(description='Gracefully stop Skynet Core web server')
     parser.add_argument('--force', '-f', action='store_true', help='Force stop: skip cmdline safety checks')
     parser.add_argument('--pid', type=int, help='Specify PID to stop (overrides pidfile)')
     parser.add_argument('--timeout', type=int, default=10, help='Timeout seconds to wait after SIGTERM')

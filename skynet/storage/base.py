@@ -1,5 +1,5 @@
 """
-Base storage abstraction interface for Skynet Lite
+Base storage abstraction interface for Skynet Core
 
 Defines the common interface that all storage adapters must implement.
 """

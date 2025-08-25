@@ -187,14 +187,14 @@ cd web && python3 diagnose.py
 
 ### How to Contribute
 - [Contributing Guide](CONTRIBUTING.md) - Complete contribution guide
-- [Good First Issues](https://github.com/StuxnetStudios/skynet-lite/labels/good%20first%20issue) - Beginner-friendly tasks
-- [Feature Requests](https://github.com/StuxnetStudios/skynet-lite/issues/new?template=feature_request.md) - Suggest new features
-- [Bug Reports](https://github.com/StuxnetStudios/skynet-lite/issues/new?template=bug_report.md) - Report issues
+- [Good First Issues](https://github.com/StuxnetStudios/skynet-core/labels/good%20first%20issue) - Beginner-friendly tasks
+- [Feature Requests](https://github.com/StuxnetStudios/skynet-core/issues/new?template=feature_request.md) - Suggest new features
+- [Bug Reports](https://github.com/StuxnetStudios/skynet-core/issues/new?template=bug_report.md) - Report issues
 
 ### Community Resources
-- [GitHub Repository](https://github.com/StuxnetStudios/skynet-lite)
-- [Issue Tracker](https://github.com/StuxnetStudios/skynet-lite/issues)
-- [Discussions](https://github.com/StuxnetStudios/skynet-lite/discussions)
+- [GitHub Repository](https://github.com/StuxnetStudios/skynet-core)
+- [Issue Tracker](https://github.com/StuxnetStudios/skynet-core/issues)
+- [Discussions](https://github.com/StuxnetStudios/skynet-core/discussions)
 - [Changelog](docs/CHANGELOG.md) - Recent changes and updates
 
 ## Release Information
@@ -214,7 +214,7 @@ If you find documentation that is:
 - Contains errors or outdated information
 - Could benefit from examples
 
-Please [open an issue](https://github.com/StuxnetStudios/skynet-lite/issues/new) or submit a pull request with improvements.
+Please [open an issue](https://github.com/StuxnetStudios/skynet-core/issues/new) or submit a pull request with improvements.
 
 ### Support Channels
 1. **GitHub Issues** - Bug reports and feature requests

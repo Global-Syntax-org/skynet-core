@@ -1,6 +1,6 @@
 <!-- Use this file to provide workspace-specific custom instructions to Copilot. For more details, visit https://code.visualstudio.com/docs/copilot/copilot-customization#_use-a-githubcopilotinstructionsmd-file -->
 
-# Skynet Lite - GitHub Copilot Instructions
+# Skynet Core - GitHub Copilot Instructions
 
 This is a Python-based local AI chatbot project that integrates Ollama (local LLM), Bing Search, and Semantic Kernel for conversational AI with web access capabilities.
 
@@ -9,8 +9,8 @@ This is a Python-based local AI chatbot project that integrates Ollama (local LL
 - **Main Framework**: Semantic Kernel for AI orchestration
 - **Local LLM**: Ollama with Mistral 7B model
 - **Web Search**: Bing Search API integration
-- **Architecture**: Modular plugin-based system
-- **Target Use**: Robotics simulation, swarm intelligence, and general AI assistance
+ - **Architecture**: Modular plugin-based system
+ - **Target Use**: Records retention, workflow automation, and general AI assistance
 
 ## Code Style Guidelines
 
@@ -35,7 +35,7 @@ This is a Python-based local AI chatbot project that integrates Ollama (local LL
 - Implement async context managers for resource cleanup
 - Create modular plugins that can be easily added/removed
 - Support both local-only and web-enhanced modes
-- Design for integration with robotics frameworks (ROS, Webots)
+- Design for integration with records retention systems and policy engines
 
 ## Testing Considerations
 

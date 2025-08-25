@@ -1,6 +1,6 @@
 """
 Main Orchestrator Entry Point
-Semantic Kernel-based skill orchestrator for Skynet Lite Phase 1
+Semantic Kernel-based skill orchestrator for Skynet Core (Phase 1)
 """
 
 import asyncio
@@ -51,7 +51,7 @@ class MainOrchestrator:
     async def start(self):
         """Start the orchestrator"""
         try:
-            self.logger.info("🚀 Starting Skynet Lite Semantic Kernel Orchestrator")
+            self.logger.info("🚀 Starting Skynet Core Semantic Kernel Orchestrator")
             
             # Initialize the semantic kernel
             await self.orchestrator.initialize()

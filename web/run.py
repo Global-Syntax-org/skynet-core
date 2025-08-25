@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Skynet Lite Web UI Launcher
+Skynet Core Web UI Launcher
 Simple script to run the Flask web interface
 """
 
@@ -46,7 +46,7 @@ def check_ollama():
         return False
 
 def main():
-    print("🚀 Skynet Lite Web UI Launcher")
+    print("🚀 Skynet Core Web UI Launcher")
     print("=" * 40)
     
     # Check Flask

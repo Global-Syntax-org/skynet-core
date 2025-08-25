@@ -5,7 +5,7 @@ import inspect
 from .loader_manager import LoaderManager
 from .memory import MemoryManager
 
-logger = logging.getLogger("SkynetLite.Assistant")
+logger = logging.getLogger("SkynetCore.Assistant")
 
 
 class SkynetLite:
@@ -63,11 +63,11 @@ class SkynetLite:
             except Exception as e:
                 logger.warning(f"Failed to initialize search tool: {e}. Web search disabled.")
 
-            logger.info("Skynet Lite initialized successfully")
+            logger.info("Skynet Core initialized successfully")
             return True
 
         except Exception as e:
-            logger.error(f"Failed to initialize Skynet Lite: {e}")
+            logger.error(f"Failed to initialize Skynet Core: {e}")
             return False
 
     async def chat(self, user_message: str) -> str:
@@ -96,7 +96,7 @@ class SkynetLite:
 
     async def chat_loop(self) -> None:
         """Main chat interaction loop"""
-        print("\n💬 Chat with Skynet Lite (type 'quit' to exit)")
+        print("\n💬 Chat with Skynet Core (type 'quit' to exit)")
         print("=" * 50)
 
         while True:
@@ -104,7 +104,7 @@ class SkynetLite:
                 user_input = input("\nYou: ").strip()
 
                 if user_input.lower() in ['quit', 'exit', 'bye']:
-                    print("🤖 Goodbye! Skynet Lite signing off.")
+                    print("🤖 Goodbye! Skynet Core signing off.")
                     break
 
                 if not user_input:
@@ -125,7 +125,7 @@ class SkynetLite:
                 self.memory_manager.add_assistant_message(response)
 
             except KeyboardInterrupt:
-                print("\n\n🤖 Goodbye! Skynet Lite signing off.")
+                print("\n\n🤖 Goodbye! Skynet Core signing off.")
                 break
             except Exception as e:
                 logger.error(f"Error in chat loop: {e}")
@@ -180,7 +180,7 @@ Please provide a concise, accurate answer based on this information. Be specific
 User: {query}
 Assistant:"""
             else:
-                full_prompt = f"""You are Skynet Lite, a helpful AI assistant powered by local AI technology. You are knowledgeable, friendly, and provide accurate information. Respond naturally and helpfully to the user's question.
+                full_prompt = f"""You are Skynet Core, a helpful AI assistant powered by local AI technology. You are knowledgeable, friendly, and provide accurate information. Respond naturally and helpfully to the user's question.
 
 User: {query}
 Assistant:"""

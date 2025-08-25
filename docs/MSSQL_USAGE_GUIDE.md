@@ -32,14 +32,14 @@ You need access to a SQL Server instance. Options:
 #### Quick Docker Setup:
 ```bash
 # Run SQL Server in Docker
-docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrong@Passw0rd" \
-   -p 1433:1433 --name sqlserver \
-   -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=$SA_PASSWORD" \
+    -p 1433:1433 --name sqlserver \
+    -d mcr.microsoft.com/mssql/server:2019-latest
 
 # Create database (optional - adapter will create if needed)
 docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd \
-   -S localhost -U SA -P "YourStrong@Passw0rd" \
-   -Q "CREATE DATABASE skynet_lite"
+    -S localhost -U SA -P "$SA_PASSWORD" \
+    -Q "CREATE DATABASE skynet_lite"
 ```
 
 ## Configuration Methods
@@ -52,7 +52,8 @@ export SKYNET_STORAGE_TYPE=mssql
 export MSSQL_SERVER=localhost
 export MSSQL_DATABASE=skynet_lite
 export MSSQL_USERNAME=sa
-export MSSQL_PASSWORD=YourStrong@Passw0rd
+# Do NOT commit real passwords to source control. Set the password in your shell or use a secrets manager.
+export MSSQL_PASSWORD=$MSSQL_PASSWORD
 export MSSQL_ENCRYPT=true
 export MSSQL_TRUST_CERT=true
 ```
@@ -69,7 +70,7 @@ mssql_config = {
         "server": "localhost",
         "database": "skynet_lite",
         "username": "sa",
-        "password": "YourStrong@Passw0rd",
+    "password": os.getenv("MSSQL_PASSWORD") or "(set via environment)",
         "encrypt": True,
         "trust_server_certificate": True,  # For dev environments
         "connection_timeout": 30
@@ -95,7 +96,7 @@ azure_config = {
         "server": "your-server.database.windows.net",
         "database": "skynet_lite",
         "username": "your-admin@your-server",
-        "password": "YourAzurePassword123!",
+    "password": os.getenv("AZURE_SQL_PASSWORD") or "(set via environment)",
         "encrypt": True,
         "trust_server_certificate": False,
         "connection_timeout": 30
@@ -125,7 +126,7 @@ async def main():
             "server": "localhost",
             "database": "skynet_lite",
             "username": "sa", 
-            "password": "YourStrong@Passw0rd",
+            "password": os.getenv("MSSQL_PASSWORD") or "(set via environment)",
             "encrypt": True,
             "trust_server_certificate": True
         }
@@ -172,7 +173,7 @@ async def advanced_mssql_demo():
             "server": "localhost",
             "database": "skynet_lite",
             "username": "sa",
-            "password": "YourStrong@Passw0rd", 
+            "password": os.getenv("MSSQL_PASSWORD") or "(set via environment)", 
             "encrypt": True,
             "trust_server_certificate": True,
             "connection_timeout": 30,
@@ -241,7 +242,7 @@ async def setup_storage():
             "server": "localhost",
             "database": "skynet_lite",
             "username": "sa",
-            "password": "YourStrong@Passw0rd",
+            "password": os.getenv("MSSQL_PASSWORD") or "(set via environment)",
             "encrypt": True,
             "trust_server_certificate": True
         }

@@ -31,7 +31,7 @@ ACCEPT_EULA=Y sudo apt-get install -y msodbcsql17 unixodbc-dev
 2. Start a SQL Server container:
 
 ```bash
-docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=YourStrong!Passw0rd' -p 1433:1433 -d --name mssql-test mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e "MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}" -p 1433:1433 -d --name mssql-test mcr.microsoft.com/mssql/server:2019-latest
 ```
 
 3. Export environment variables for the tests:
@@ -40,7 +40,8 @@ docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=YourStrong!Passw0rd' -p 1433
 export MSSQL_TEST_SERVER=127.0.0.1
 export MSSQL_TEST_DATABASE=master
 export MSSQL_TEST_USERNAME=sa
-export MSSQL_TEST_PASSWORD=YourStrong!Passw0rd
+# Set MSSQL_TEST_PASSWORD in your environment or use a CI secret; do NOT commit it to source control.
+export MSSQL_TEST_PASSWORD=${MSSQL_TEST_PASSWORD}
 ```
 
 4. Install Python test deps and run the test file:

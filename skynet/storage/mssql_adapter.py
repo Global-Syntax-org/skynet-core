@@ -1,5 +1,5 @@
 """
-Microsoft SQL Server storage adapter for Skynet Lite
+Microsoft SQL Server storage adapter for Skynet Core
 
 Implements storage interface using MSSQL database with async support.
 Supports both SQL Server Authentication and Windows Authentication.
@@ -7,7 +7,7 @@ Supports both SQL Server Authentication and Windows Authentication.
 Configuration:
     {
         "server": "localhost",
-        "database": "skynet_lite", 
+    "database": "skynet_core", 
         "username": "skynet_user",  # Optional for Windows auth
         "password": "password",     # Optional for Windows auth
         "driver": "ODBC Driver 17 for SQL Server",  # Optional
@@ -54,7 +54,7 @@ class MSSQLAdapter(StorageAdapter):
     def _build_connection_string(self) -> str:
         """Build MSSQL connection string from config"""
         server = self.config.get("server", "localhost")
-        database = self.config.get("database", "skynet_lite")
+        database = self.config.get("database", "skynet_core")
         driver = self.config.get("driver", "ODBC Driver 17 for SQL Server")
         
         conn_parts = [

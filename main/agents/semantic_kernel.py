@@ -1,5 +1,5 @@
 """
-Semantic Kernel Orchestrator for Skynet Lite
+Semantic Kernel Orchestrator for Skynet Core
 Implements Microsoft Semantic Kernel patterns for skill-based AI orchestration
 """
 
@@ -279,12 +279,9 @@ class SemanticKernelOrchestrator:
     async def initialize_skill_implementations(self) -> None:
         """Initialize all skill implementations"""
         try:
-            import sys
-            
             # Initialize HTTP skill
             try:
-                sys.path.append("main/skills")
-                from http_skill import make_request, download_file
+                from skills.http_skill import make_request, download_file
                 self.skill_functions.update({
                     "http_request": make_request,
                     "download_file": download_file
@@ -295,8 +292,7 @@ class SemanticKernelOrchestrator:
             
             # Initialize Database skill
             try:
-                sys.path.append("main/skills/database")
-                from database_skill import execute_query, create_table, insert_data, backup_database
+                from skills.database.database_skill import execute_query, create_table, insert_data, backup_database
                 self.skill_functions.update({
                     "execute_query": execute_query,
                     "create_table": create_table,
@@ -309,8 +305,7 @@ class SemanticKernelOrchestrator:
             
             # Initialize Filesystem skill
             try:
-                sys.path.append("main/skills/filesystem")
-                from filesystem_skill import read_file, write_file, list_directory, search_files, compress_files
+                from skills.filesystem.filesystem_skill import read_file, write_file, list_directory, search_files, compress_files
                 self.skill_functions.update({
                     "read_file": read_file,
                     "write_file": write_file,
@@ -324,9 +319,8 @@ class SemanticKernelOrchestrator:
             
             # Initialize API Integration skill
             try:
-                sys.path.append("main/skills/api")
-                from api_integration_skill import (make_api_call, graphql_query, register_webhook, 
-                                                 verify_webhook, batch_api_calls, monitor_api_health)
+                from skills.api.api_integration_skill import (make_api_call, graphql_query, register_webhook, 
+                                                verify_webhook, batch_api_calls, monitor_api_health)
                 self.skill_functions.update({
                     "make_api_call": make_api_call,
                     "graphql_query": graphql_query,
@@ -341,8 +335,7 @@ class SemanticKernelOrchestrator:
             
             # Initialize Memory skill
             try:
-                sys.path.append("main/skills/memory")
-                from memory_skill import (store_memory, search_memories, create_knowledge_graph, 
+                from skills.memory.memory_skill import (store_memory, search_memories, create_knowledge_graph, 
                                         compress_memories, get_memory_stats)
                 self.skill_functions.update({
                     "store_memory": store_memory,

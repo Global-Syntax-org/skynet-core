@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Skynet Lite Web Interface with Privacy-First Authentication
-Simple Flask web UI for chatting with Skynet Lite including user accounts
+Skynet Core Web Interface with Privacy-First Authentication
+Simple Flask web UI for chatting with Skynet Core including user accounts
 """
 
 import sys
@@ -99,7 +99,17 @@ app = Flask(__name__)
 configure_session_security(app)
 
 # Use a single, canonical SQLite database file inside the web/ directory
-DB_PATH = os.path.join(os.path.dirname(__file__), 'skynet_lite.db')
+DB_PATH = os.path.join(os.path.dirname(__file__), 'skynet_core.db')
+
+# Backward compatibility: migrate legacy database filename if present
+LEGACY_DB_PATH = os.path.join(os.path.dirname(__file__), 'skynet_lite.db')
+if os.path.exists(LEGACY_DB_PATH) and not os.path.exists(DB_PATH):
+    try:
+        import shutil
+        shutil.copy2(LEGACY_DB_PATH, DB_PATH)
+        print("📦 Migrated legacy database skynet_lite.db -> skynet_core.db")
+    except Exception as e:
+        print(f"⚠️ Failed to migrate legacy database file: {e}")
 
 
 # Initialize the database (ensure schema exists before creating AuthManager)
@@ -133,7 +143,7 @@ def before_request():
 skynet = None
 
 async def init_skynet():
-    """Initialize Skynet Lite instance - reuse global for conversation continuity"""
+    """Initialize Skynet Core instance - reuse global for conversation continuity"""
     global skynet
     # Ensure we're running on an event loop (should be the background loop)
     current_loop = asyncio.get_running_loop()
@@ -435,7 +445,7 @@ def reset_password_page():
 @app.route('/health')
 def health():
     """Health check endpoint"""
-    return jsonify({'status': 'ok', 'service': 'skynet-lite-web'})
+    return jsonify({'status': 'ok', 'service': 'skynet-core-web'})
 
 @app.route('/clear', methods=['POST'])
 @login_required
@@ -503,7 +513,7 @@ def get_user_profile():
 
 # (Database initialized earlier during module import; avoid re-defining/initializing here.)
 if __name__ == '__main__':
-    print("🌐 Starting Skynet Lite Web Interface...")
+    print("🌐 Starting Skynet Core Web Interface...")
     print("🔗 Open http://localhost:5000 in your browser")
     print("💡 Tip: Make sure Ollama is running with 'ollama serve'")
     

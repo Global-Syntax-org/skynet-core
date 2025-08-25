@@ -14,8 +14,8 @@
 
 1. **Clone and Setup**
    ```bash
-   git clone https://github.com/StuxnetStudios/skynet-lite.git
-   cd skynet-lite
+   git clone https://github.com/StuxnetStudios/skynet-core.git
+   cd skynet-core
    python3 setup.py  # Creates venv and installs dependencies
    ```
 
@@ -157,26 +157,26 @@ python3 main.py
 
 2. **Build and Run**
    ```bash
-   docker build -t skynet-lite .
-   docker run -d -p 5000:5000 --name skynet-lite skynet-lite
+   docker build -t skynet-core .
+   docker run -d -p 5000:5000 --name skynet-core skynet-core
    ```
 
 #### Option 3: Systemd Service
 
 1. **Create Service File**
    ```ini
-   # /etc/systemd/system/skynet-lite.service
+   # /etc/systemd/system/skynet-core.service
    [Unit]
-   Description=Skynet Lite Web Interface
+   Description=Skynet Core Web Interface
    After=network.target ollama.service
 
    [Service]
    Type=exec
    User=skynet
    Group=skynet
-   WorkingDirectory=/opt/skynet-lite/web
-   Environment=PATH=/opt/skynet-lite/.venv/bin
-   ExecStart=/opt/skynet-lite/.venv/bin/gunicorn -c gunicorn.conf.py app:app
+   WorkingDirectory=/opt/skynet-core/web
+   Environment=PATH=/opt/skynet-core/.venv/bin
+   ExecStart=/opt/skynet-core/.venv/bin/gunicorn -c gunicorn.conf.py app:app
    Restart=always
    RestartSec=10
 
@@ -187,14 +187,14 @@ python3 main.py
 2. **Enable and Start**
    ```bash
    systemctl daemon-reload
-   systemctl enable skynet-lite
-   systemctl start skynet-lite
+   systemctl enable skynet-core
+   systemctl start skynet-core
    ```
 
 ### Reverse Proxy (Nginx)
 
 ```nginx
-# /etc/nginx/sites-available/skynet-lite
+# /etc/nginx/sites-available/skynet-core
 server {
     listen 80;
     server_name your-domain.com;
@@ -209,7 +209,7 @@ server {
     }
 
     location /static {
-        alias /opt/skynet-lite/web/static;
+        alias /opt/skynet-core/web/static;
         expires 1y;
         add_header Cache-Control "public, immutable";
     }
@@ -222,8 +222,8 @@ server {
 
 ```bash
 # Clone repository
-git clone https://github.com/StuxnetStudios/skynet-lite.git
-cd skynet-lite
+git clone https://github.com/StuxnetStudios/skynet-core.git
+cd skynet-core
 
 # Setup development environment
 python3 setup.py
@@ -347,7 +347,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('skynet-lite.log'),
+        logging.FileHandler('skynet-core.log'),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -429,7 +429,8 @@ Key metrics to monitor:
 3. **Web Interface Not Loading**
    ```bash
    # Check Flask logs
-   tail -f skynet-lite.log
+      tail -f skynet-core.log
+```
    
    # Test endpoints directly
    curl http://localhost:5000/health

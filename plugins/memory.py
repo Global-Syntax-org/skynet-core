@@ -1,5 +1,5 @@
 """
-Chat memory management for Skynet Lite
+Chat memory management for Skynet Core
 Handles conversation history and context tracking
 """
 

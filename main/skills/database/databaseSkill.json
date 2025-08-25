@@ -204,7 +204,7 @@
     "created": "2025-08-22T00:00:00Z",
     "updated": "2025-08-22T00:00:00Z",
     "tags": ["database", "sql", "sqlite", "postgresql", "mongodb", "data"],
-    "documentation_url": "https://docs.skynet-lite.ai/skills/database",
+    "documentation_url": "https://docs.skynet-core.ai/skills/database",
     "examples": [
       {
         "name": "Simple Query",

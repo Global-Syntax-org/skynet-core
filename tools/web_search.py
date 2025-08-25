@@ -1,5 +1,5 @@
 """
-Web Search integration for Skynet Lite
+Web Search integration for Skynet Core
 Provides real-time web search capabilities with Azure Search and DuckDuckGo support
 """
 

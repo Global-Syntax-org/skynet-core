@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bootstrap entrypoint for Skynet Lite.
+"""Bootstrap entrypoint for Skynet Core.
 
 This file is intentionally small; core logic lives in `skynet.assistant`.
 """
@@ -7,7 +7,7 @@ import asyncio
 import logging
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("SkynetLite")
+logger = logging.getLogger("SkynetCore")
 
 
 async def main() -> None:
@@ -19,12 +19,12 @@ async def main() -> None:
         if await chatbot.initialize():
             await chatbot.chat_loop()
         else:
-            print("❌ Failed to initialize Skynet Lite")
+            print("❌ Failed to initialize Skynet Core")
             print("🔧 Make sure Ollama is running: ollama serve")
             print("🔧 And ensure the model is available: ollama pull mistral")
     except Exception as e:
-        logger.error(f"Failed to start Skynet Lite: {e}")
-        print(f"❌ Failed to start Skynet Lite: {e}")
+        logger.error(f"Failed to start Skynet Core: {e}")
+        print(f"❌ Failed to start Skynet Core: {e}")
         print("🔧 Make sure Ollama is running: ollama serve")
         print("🔧 And ensure the model is available: ollama pull mistral")
     finally:

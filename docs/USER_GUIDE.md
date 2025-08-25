@@ -1,10 +1,10 @@
-# Skynet Lite User Guide
+# Skynet Core User Guide
 
 ## Getting Started
 
-### What is Skynet Lite?
+### What is Skynet Core?
 
-Skynet Lite is a privacy-first AI assistant that runs entirely on your local machine. It combines the power of local language models with web search capabilities to provide intelligent, contextual responses while keeping your data private.
+Skynet Core is a privacy-first AI assistant that runs entirely on your local machine. It combines the power of local language models with web search capabilities to provide intelligent, contextual responses while keeping your data private.
 
 ### Key Benefits
 
@@ -20,8 +20,8 @@ Skynet Lite is a privacy-first AI assistant that runs entirely on your local mac
 
 1. **Download and Setup**
    ```bash
-   git clone https://github.com/StuxnetStudios/skynet-lite.git
-   cd skynet-lite
+   git clone https://github.com/StuxnetStudios/skynet-core.git
+   cd skynet-core
    python3 setup.py
    ```
 
@@ -45,7 +45,7 @@ Skynet Lite is a privacy-first AI assistant that runs entirely on your local mac
    ollama pull mistral
    ```
 
-4. **Launch Skynet Lite**
+4. **Launch Skynet Core**
    
    **Web Interface (Recommended):**
    ```bash
@@ -155,7 +155,7 @@ Currently, conversations are stored in browser session. For persistent storage:
 ### Starting Console Mode
 
 ```bash
-cd skynet-lite
+cd skynet-core
 python3 main.py
 ```
 
@@ -163,7 +163,7 @@ python3 main.py
 
 **Basic Usage:**
 ```
-💬 Chat with Skynet Lite (type 'quit' to exit)
+💬 Chat with Skynet Core (type 'quit' to exit)
 ==================================================
 
 You: Hello, how are you?
@@ -308,12 +308,12 @@ Best regards,
 ### Creative Tasks
 
 ```
-You: Write a short story about a robot
+You: Write a short story about a record
 🤖 Skynet: Here's a short story for you:
 
-"The Last Maintenance"
+"The Last Archive"
 
-In the year 2157, maintenance robot R-247 performed its daily rounds...
+In the year 2157, the central archive system processed its daily retention cycle...
 ```
 
 ### Learning and Education
@@ -394,7 +394,7 @@ python3 app.py
 
 #### Log Files
 Check these files for error messages:
-- `skynet-lite.log` (if configured)
+- `skynet-core.log` (if configured)
 - Console output
 - Browser developer console (F12)
 
@@ -496,7 +496,7 @@ Skynet Lite can be integrated with:
 - Jupyter notebooks
 - VS Code extensions
 - Custom applications via API
-- Robotics frameworks (ROS, Webots)
+- Records retention systems and policy engines
 
 ### Batch Processing
 

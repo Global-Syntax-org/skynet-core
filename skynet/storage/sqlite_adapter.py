@@ -1,5 +1,5 @@
 """
-SQLite storage adapter for Skynet Lite
+SQLite storage adapter for Skynet Core
 
 Implements storage interface using SQLite database with async support.
 """

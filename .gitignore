@@ -15,3 +15,9 @@ cookies.txt
 *.db
 web/*.db
  # website/ removed to track the site in the repo
+
+# Ignore environment and secrets files
+.env
+.env.*
+.secrets/
+.vscode/launch.json

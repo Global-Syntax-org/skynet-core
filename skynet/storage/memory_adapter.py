@@ -1,5 +1,5 @@
 """
-In-memory storage adapter for Skynet Lite
+In-memory storage adapter for Skynet Core
 
 Implements storage interface using in-memory dictionaries.
 Useful for testing and temporary storage.

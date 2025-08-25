@@ -1,4 +1,4 @@
--- Schema for Skynet Lite SQLite database
+-- Schema for Skynet Core SQLite database
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (

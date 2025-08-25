@@ -1,4 +1,4 @@
-Skynet Lite Website
+Skynet Core Website
 
 This directory contains a small static marketing site intended to live in the repository alongside the project source.
 
@@ -7,7 +7,7 @@ Goals
 - Provide a minimal, easy-to-edit HTML/CSS preview that can be deployed via GitHub Pages.
 
 Moving to a new project later
-1. Create a new repository (e.g. `skynet-lite-website`).
+1. Create a new repository (e.g. `skynet-core-website`).
 2. In the new repo, create a `website/` directory and copy the files from this project.
 3. Update CI/deploy workflows to publish from the new repo.
 

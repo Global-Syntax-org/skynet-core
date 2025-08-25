@@ -1,10 +1,10 @@
-# Skynet Lite Web UI
+# Skynet Core Web UI
 
-Simple Flask-based web interface for Skynet Lite.
+Simple Flask-based web interface for Skynet Core.
 
 ## Features
 
-- 💬 Chat interface with Skynet Lite
+- 💬 Chat interface with Skynet Core
 - 🔍 Web search integration (DuckDuckGo/Azure/Google)
 - 📱 Responsive design
 - 🧹 Clear chat functionality
@@ -41,13 +41,13 @@ Simple Flask-based web interface for Skynet Lite.
 
 ## Configuration
 
-The web UI uses the same configuration as the main Skynet Lite application:
+The web UI uses the same configuration as the main Skynet Core application:
 
 - Environment variables (OLLAMA_MODEL, AZURE_SEARCH_KEY, etc.)
    - Note: `OLLAMA_BASE_URL` is deprecated; use `skynet.config` for advanced configuration.
 - `config.yaml` file in the parent directory
 
-**Database**: User accounts and conversation history are stored in `web/skynet_lite.db`.
+**Database**: User accounts and conversation history are stored in `web/skynet_core.db` (auto-migrated from `skynet_lite.db` if the legacy file is present).
 
 ## API Endpoints
 

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Skynet Lite - AI Chat</title>
+    <title>Skynet Core - AI Chat</title>
     <link rel="stylesheet" href="/static/style.css?v=1.3">
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>🤖 Skynet Lite</h1>
+            <h1>🤖 Skynet Core</h1>
             <p class="subtitle">Local AI Assistant with Web Search</p>
             <div class="header-buttons">
                 <button id="historyBtn" class="header-btn" onclick="toggleHistory()">History</button>
@@ -206,7 +206,7 @@
                         chatMessages.innerHTML = `
                             <div class="message bot-message">
                                 <div class="message-content">
-                                    <strong>🤖 Skynet:</strong> Chat cleared! Ready for a new conversation.
+                                    <strong>🤖 Skynet Core:</strong> Chat cleared! Ready for a new conversation.
                                 </div>
                                 <div class="message-time">${new Date().toLocaleTimeString()}</div>
                             </div>
@@ -281,7 +281,7 @@
                 if (msg.type === 'user') {
                     messageContent.innerHTML = `<strong>👤 You:</strong> ${escapeHtml(msg.content)}`;
                 } else {
-                    messageContent.innerHTML = `<strong>🤖 Skynet:</strong> ${formatBotMessage(msg.content)}`;
+                    messageContent.innerHTML = `<strong>🤖 Skynet Core:</strong> ${formatBotMessage(msg.content)}`;
                 }
                 
                 const messageTime = document.createElement('div');
@@ -299,7 +299,7 @@
             chatMessages.innerHTML = `
                 <div class="message bot-message">
                     <div class="message-content">
-                        <strong>🤖 Skynet:</strong> Hello! I'm your local AI assistant. I can help with questions, research topics using web search, and much more. What would you like to know?
+                        <strong>🤖 Skynet Core:</strong> Hello! I'm your local AI assistant. I can help with questions, research topics using web search, and much more. What would you like to know?
                     </div>
                     <div class="message-time">${new Date().toLocaleTimeString()}</div>
                 </div>
@@ -323,7 +323,7 @@
             if (type === 'user') {
                 messageContent.innerHTML = `<strong>👤 You:</strong> ${escapeHtml(content)}`;
             } else if (type === 'bot') {
-                messageContent.innerHTML = `<strong>🤖 Skynet:</strong> ${formatBotMessage(content)}`;
+                messageContent.innerHTML = `<strong>🤖 Skynet Core:</strong> ${formatBotMessage(content)}`;
             } else if (type === 'error') {
                 messageContent.innerHTML = `<strong>⚠️ Error:</strong> ${escapeHtml(content)}`;
             }
@@ -381,7 +381,7 @@
     </script>
     
     <div style="text-align: center; margin-top: 20px; color: #888; font-size: 12px;">
-    Skynet Lite v1.3 • Cache-Bust: {{ timestamp }}
+    Skynet Core v2.0 • Cache-Bust: {{ timestamp }}
     </div>
 </body>
 </html>

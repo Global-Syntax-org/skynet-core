@@ -1,5 +1,5 @@
 """
-File-based storage adapter for Skynet Lite
+File-based storage adapter for Skynet Core
 
 Implements storage interface using JSON files on disk.
 """

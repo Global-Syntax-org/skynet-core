@@ -1,6 +1,6 @@
-# Contributing to Skynet Lite
+# Contributing to Skynet Core
 
-Thank you for your interest in contributing to Skynet Lite! This guide will help you get started with contributing to our privacy-first AI assistant project.
+Thank you for your interest in contributing to Skynet Core! This guide will help you get started with contributing to our privacy-first AI assistant project.
 
 ## Table of Contents
 
@@ -37,13 +37,13 @@ This project adheres to a code of conduct that ensures a welcoming environment f
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/skynet-lite.git
-   cd skynet-lite
+   git clone https://github.com/YOUR_USERNAME/skynet-core.git
+   cd skynet-core
    ```
 
 3. **Add upstream remote**:
    ```bash
-   git remote add upstream https://github.com/StuxnetStudios/skynet-lite.git
+   git remote add upstream https://github.com/StuxnetStudios/skynet-core.git
    ```
 
 ## Development Setup

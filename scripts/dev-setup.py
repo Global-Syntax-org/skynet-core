@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Development environment setup script for Skynet Lite
+Development environment setup script for Skynet Core
 Sets up pre-commit hooks, development dependencies, and tooling
 """
 
@@ -92,7 +92,7 @@ def create_test_structure() -> bool:
         # Test files with basic structure
         test_files = {
             "__init__.py": "",
-            "conftest.py": '''"""Pytest configuration and fixtures for Skynet Lite tests"""
+            "conftest.py": '''"""Pytest configuration and fixtures for Skynet Core tests"""
 import pytest
 import asyncio
 from unittest.mock import AsyncMock, Mock
@@ -270,7 +270,7 @@ trim_trailing_whitespace = false
 
 async def main() -> None:
     """Set up development environment with proper async handling"""
-    print("🚀 Setting up Skynet Lite development environment...")
+    print("🚀 Setting up Skynet Core development environment...")
     
     success = True
     

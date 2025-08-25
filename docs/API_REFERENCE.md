@@ -147,7 +147,7 @@ class MemoryManager:
 ```json
 {
     "status": "ok",
-    "service": "skynet-lite-web"
+    "service": "skynet-core-web"
 }
 ```
 

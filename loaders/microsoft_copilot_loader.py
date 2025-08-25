@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class MicrosoftCopilotLoader:
-    """Microsoft Copilot integration for Skynet Lite.
+    """Microsoft Copilot integration for Skynet Core.
     
     Uses Microsoft's Copilot API (formerly Bing Chat) for AI completions.
     Requires Microsoft API credentials and access to Copilot services.

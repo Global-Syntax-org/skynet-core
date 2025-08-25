@@ -267,7 +267,7 @@
     "created": "2025-08-22T00:00:00Z",
     "updated": "2025-08-22T00:00:00Z",
     "tags": ["filesystem", "files", "directories", "search", "compression", "io"],
-    "documentation_url": "https://docs.skynet-lite.ai/skills/filesystem",
+    "documentation_url": "https://docs.skynet-core.ai/skills/filesystem",
     "examples": [
       {
         "name": "Read File",

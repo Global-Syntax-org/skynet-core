@@ -128,6 +128,6 @@
     "created": "2024-01-01T00:00:00Z",
     "updated": "2024-01-01T00:00:00Z",
     "tags": ["http", "networking", "core", "requests"],
-    "documentation_url": "https://docs.skynet-lite.ai/skills/http"
+    "documentation_url": "https://docs.skynet-core.ai/skills/http"
   }
 }

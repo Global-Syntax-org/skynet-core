@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for Skynet Lite Web UI
+Test script for Skynet Core Web UI
 Demonstrates the web interface functionality
 """
 
@@ -12,7 +12,7 @@ import subprocess
 import signal
 
 def main():
-    print("🧪 Skynet Lite Web UI Test")
+    print("🧪 Skynet Core Web UI Test")
     print("=" * 40)
     
     # Check if we're in the right directory

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Quick MSSQL setup and test script for Skynet Lite
+Quick MSSQL setup and test script for Skynet Core
 
 This script helps you quickly configure and test MSSQL storage.
 Run with different arguments to test various configurations.
@@ -44,14 +44,13 @@ def show_docker_setup():
     
     docker_commands = [
         "# 1. Run SQL Server in Docker",
-        'docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourStrong@Passw0rd" \\',
-        '   -p 1433:1433 --name sqlserver \\',
-        '   -d mcr.microsoft.com/mssql/server:2019-latest',
+        "# NOTE: set a strong SA password in your shell first and do NOT commit it to source control",
+        "# Example (set in shell): export SA_PASSWORD=YourStrong@Passw0rd",
+    "docker run -e \"ACCEPT_EULA=Y\" -e \"SA_PASSWORD=${SA_PASSWORD}\" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server:2019-latest",
         "",
         "# 2. Create database (optional)",
-        'docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd \\',
-        '   -S localhost -U SA -P "YourStrong@Passw0rd" \\',
-        '   -Q "CREATE DATABASE skynet_lite"',
+        "# Use the SA_PASSWORD from your environment when running sqlcmd",
+    "docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P \"$SA_PASSWORD\" -Q \"CREATE DATABASE skynet_core\"",
         "",
         "# 3. Check if container is running",
         "docker ps",
@@ -71,9 +70,10 @@ def get_test_configs():
             "type": "mssql",
             "config": {
                 "server": "localhost",
-                "database": "skynet_lite", 
-                "username": "sa",
-                "password": "YourStrong@Passw0rd",
+                "database": "skynet_core", 
+                        "username": "sa",
+                        # Avoid embedding real passwords in source. Prefer env vars or secrets.
+                        "password": os.getenv("SA_PASSWORD") or None,
                 "encrypt": True,
                 "trust_server_certificate": True,
                 "connection_timeout": 30
@@ -83,7 +83,7 @@ def get_test_configs():
             "type": "mssql",
             "config": {
                 "server": "localhost\\SQLEXPRESS",
-                "database": "skynet_lite",
+                "database": "skynet_core",
                 "trusted_connection": True,
                 "encrypt": True,
                 "trust_server_certificate": True
@@ -93,9 +93,10 @@ def get_test_configs():
             "type": "mssql",
             "config": {
                 "server": "your-server.database.windows.net",
-                "database": "skynet_lite",
+                "database": "skynet_core",
                 "username": "your-admin@your-server",
-                "password": "YourAzurePassword123!",
+                # Use environment variable for Azure password in real deployments
+                "password": os.getenv("AZURE_SQL_PASSWORD") or None,
                 "encrypt": True,
                 "trust_server_certificate": False,
                 "connection_timeout": 30
@@ -165,7 +166,11 @@ def show_environment_setup(config_name, config):
     
     if config['config'].get('username'):
         env_vars.append(f"export MSSQL_USERNAME=\"{config['config']['username']}\"")
-        env_vars.append(f"export MSSQL_PASSWORD=\"{config['config']['password']}\"")
+        # Don't print raw passwords. Recommend setting them in the shell or secret store.
+        if config['config'].get('password'):
+            env_vars.append("# MSSQL_PASSWORD is set in your environment (masked) - do NOT commit it to source control")
+        else:
+            env_vars.append("# MSSQL_PASSWORD: (not set) - set via environment variable or secret manager")
     
     if config['config'].get('trusted_connection'):
         env_vars.append("export MSSQL_TRUSTED_CONNECTION=true")
@@ -182,7 +187,7 @@ def show_environment_setup(config_name, config):
 
 async def main():
     """Main function"""
-    logger.info("🗃️  Skynet Lite - MSSQL Setup & Test Tool")
+    logger.info("🗃️  Skynet Core - MSSQL Setup & Test Tool")
     logger.info("=" * 50)
     
     # Check dependencies
@@ -229,7 +234,7 @@ async def main():
             success = await test_mssql_connection(config_type, config)
             if success:
                 logger.info("\n🎉 MSSQL setup successful!")
-                logger.info("You can now use MSSQL with Skynet Lite.")
+                logger.info("You can now use MSSQL with Skynet Core.")
             else:
                 logger.info("\n💡 Setup Tips:")
                 logger.info("1. Make sure SQL Server is running")

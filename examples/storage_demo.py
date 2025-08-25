@@ -2,7 +2,7 @@
 """
 Quick demo of storage abstraction with MSSQL configuration
 
-This script shows how to configure MSSQL storage for Skynet Lite
+This script shows how to configure MSSQL storage for Skynet Core
 without requiring an actual SQL Server instance.
 """
 
@@ -34,7 +34,7 @@ def demo_mssql_config():
         "type": "mssql",
         "config": {
             "server": "localhost\\SQLEXPRESS",
-            "database": "skynet_lite", 
+            "database": "skynet_core", 
             "trusted_connection": True,
             "encrypt": True,
             "trust_server_certificate": True  # For dev environments
@@ -47,25 +47,28 @@ def demo_mssql_config():
     logger.info(f"  Trusted Connection: {windows_auth_config['config']['trusted_connection']}")
     
     # Example 2: SQL Server Authentication
+    # Prefer pulling sensitive values from the environment. Example shows placeholders only.
     sql_auth_config = {
-        "type": "mssql", 
+        "type": "mssql",
         "config": {
-            "server": "sqlserver.company.com",
-            "database": "skynet_production",
-            "username": "skynet_app",
-            "password": "SecurePassword123!",
+            "server": os.getenv("SKYNET_MSSQL_SERVER", "sqlserver.company.com"),
+            "database": os.getenv("SKYNET_MSSQL_DATABASE", "skynet_production"),
+            "username": os.getenv("SKYNET_MSSQL_USERNAME", "skynet_app"),
+            # Never hard-code passwords in source. Use environment or a secrets manager.
+            "password": os.getenv("SKYNET_MSSQL_PASSWORD"),
             "trusted_connection": False,
             "encrypt": True,
             "trust_server_certificate": False,
             "connection_timeout": 30
         }
     }
-    
-    logger.info("\nSQL Server Authentication Config:")
+
+    logger.info("\nSQL Server Authentication Config (sensitive fields masked):")
     logger.info(f"  Server: {sql_auth_config['config']['server']}")
     logger.info(f"  Database: {sql_auth_config['config']['database']}")
     logger.info(f"  Username: {sql_auth_config['config']['username']}")
-    logger.info(f"  Password: {'*' * len(sql_auth_config['config']['password'])}")
+    pwd = sql_auth_config['config'].get('password')
+    logger.info(f"  Password: {'***' if pwd else '(not set)'}")
     
     # Example 3: Azure SQL Database
     azure_config = {
@@ -103,18 +106,18 @@ def demo_connection_strings():
         configs = [
             {
                 "server": "localhost",
-                "database": "skynet_lite", 
+                "database": "skynet_core", 
                 "trusted_connection": True,
                 "encrypt": True
             },
-            {
-                "server": "remote.database.com",
-                "database": "production_db",
-                "username": "app_user",
-                "password": "secret123",
-                "trusted_connection": False,
-                "encrypt": True,
-                "trust_server_certificate": False
+        {
+            "server": os.getenv("SKYNET_MSSQL_SERVER", "remote.database.com"),
+            "database": os.getenv("SKYNET_MSSQL_DATABASE", "production_db"),
+            "username": os.getenv("SKYNET_MSSQL_USERNAME", "app_user"),
+            "password": os.getenv("SKYNET_MSSQL_PASSWORD"),
+            "trusted_connection": False,
+            "encrypt": True,
+            "trust_server_certificate": False
             }
         ]
         
@@ -185,7 +188,7 @@ async def demo_fallback_behavior():
 
 def main():
     """Main demo function"""
-    logger.info("🗃️  Skynet Lite Storage Abstraction - MSSQL Demo")
+    logger.info("🗃️  Skynet Core Storage Abstraction - MSSQL Demo")
     logger.info("=" * 50)
     
     # Show configuration examples

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Skynet Lite Web UI Diagnostics
+Skynet Core Web UI Diagnostics
 Helps troubleshoot web interface issues
 """
 
@@ -154,7 +154,7 @@ def test_web_endpoint():
                 proc.kill()
 
 def main():
-    print("🔧 Skynet Lite Web UI Diagnostics")
+    print("🔧 Skynet Core Web UI Diagnostics")
     print("=" * 50)
     
     # Check prerequisites

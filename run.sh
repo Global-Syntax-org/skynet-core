@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# run.sh - safe one-shot launcher for Skynet Lite web app
+# run.sh - safe one-shot launcher for Skynet Core web app
 # - kills existing listener on port 5000 (if any)
 # - starts the app with system python3 (prefer .venv if present)
 # - writes logs to /tmp/skynet_web.log and pid to /tmp/skynet_web.pid

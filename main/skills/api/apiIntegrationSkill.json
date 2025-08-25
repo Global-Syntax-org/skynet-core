@@ -260,7 +260,7 @@
     "created": "2025-08-22T00:00:00Z",
     "updated": "2025-08-22T00:00:00Z",
     "tags": ["api", "rest", "graphql", "webhooks", "integration", "http"],
-    "documentation_url": "https://docs.skynet-lite.ai/skills/api-integration",
+    "documentation_url": "https://docs.skynet-core.ai/skills/api-integration",
     "examples": [
       {
         "name": "REST API Call",

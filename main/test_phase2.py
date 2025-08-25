@@ -35,7 +35,7 @@ TEST_CONFIG = {
             "The weather is sunny today",
             "Python is a programming language",
             "Machine learning requires data",
-            "Robots can perform automated tasks",
+            "Records are retained according to policy and lifecycle rules",
             "Neural networks learn from examples"
         ]
     }

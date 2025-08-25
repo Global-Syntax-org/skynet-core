@@ -1,5 +1,5 @@
 """
-Storage manager for Skynet Lite
+Storage manager for Skynet Core
 
 Centralized management of storage adapters and configuration.
 """
@@ -48,7 +48,7 @@ class StorageManager:
             },
             "mssql": {
                 "server": "localhost",
-                "database": "skynet_lite",
+                "database": "skynet_core",
                 "driver": "ODBC Driver 17 for SQL Server",
                 # Do not assume Windows trusted auth by default; prefer explicit opt-in
                 "trusted_connection": False,
@@ -89,7 +89,7 @@ class StorageManager:
         if storage_type == "mssql":
             config = {
                 "server": os.getenv("MSSQL_SERVER", "localhost"),
-                "database": os.getenv("MSSQL_DATABASE", "skynet_lite"),
+                "database": os.getenv("MSSQL_DATABASE", "skynet_core"),
                 "username": os.getenv("MSSQL_USERNAME"),
                 "password": os.getenv("MSSQL_PASSWORD"),
                 "driver": os.getenv("MSSQL_DRIVER", "ODBC Driver 17 for SQL Server"),

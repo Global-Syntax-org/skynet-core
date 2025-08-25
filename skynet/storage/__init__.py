@@ -1,5 +1,5 @@
 """
-Skynet Lite Storage Abstraction Layer
+Skynet Core Storage Abstraction Layer
 
 This module provides a unified interface for data storage across different backends:
 - SQLite databases

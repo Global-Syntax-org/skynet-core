@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Privacy-First Authentication System for Skynet Lite
+Privacy-First Authentication System for Skynet Core
 Minimal data collection with secure session management
 """
 
@@ -368,7 +368,7 @@ class AuthManager:
             
             # Create message
             message = MIMEMultipart("alternative")
-            message["Subject"] = "Skynet Lite - Password Reset"
+            message["Subject"] = "Skynet Core - Password Reset"
             message["From"] = sender_email
             message["To"] = email
             
@@ -379,7 +379,7 @@ class AuthManager:
             text = f"""
 Hello {username},
 
-You have requested a password reset for your Skynet Lite account.
+You have requested a password reset for your Skynet Core account.
 
 Click the following link to reset your password:
 {reset_url}
@@ -389,7 +389,7 @@ This link will expire in 24 hours.
 If you did not request this reset, please ignore this email.
 
 Best regards,
-The Skynet Lite Team
+The Skynet Core Team
             """
             
             html = f"""
@@ -398,7 +398,7 @@ The Skynet Lite Team
     <h2>Password Reset Request</h2>
     <p>Hello <strong>{username}</strong>,</p>
     
-    <p>You have requested a password reset for your Skynet Lite account.</p>
+    <p>You have requested a password reset for your Skynet Core account.</p>
     
     <p><a href="{reset_url}" style="background-color: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Your Password</a></p>
     
@@ -409,7 +409,7 @@ The Skynet Lite Team
     
     <p>If you did not request this reset, please ignore this email.</p>
     
-    <p>Best regards,<br>The Skynet Lite Team</p>
+    <p>Best regards,<br>The Skynet Core Team</p>
   </body>
 </html>
             """

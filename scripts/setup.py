@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Setup script for Skynet Lite
+Setup script for Skynet Core
 Helps with initial configuration and dependency verification
 """
 
@@ -111,7 +111,7 @@ def pull_ollama_model():
 
 def main():
     """Main setup function"""
-    print("🚀 Setting up Skynet Lite...")
+    print("🚀 Setting up Skynet Core...")
     print("=" * 40)
     
     # Check requirements
@@ -126,7 +126,7 @@ def main():
     print("\n" + "=" * 40)
     
     if all(checks):
-        print("🎉 Setup complete! Skynet Lite is ready to run.")
+        print("🎉 Setup complete! Skynet Core is ready to run.")
         print("\n📝 To start chatting:")
         print("   python main.py")
         print("\n🔧 Optional: Set up Bing Search")
