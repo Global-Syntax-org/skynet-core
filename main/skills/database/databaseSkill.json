@@ -200,7 +200,7 @@
     "max_query_length": 10000
   },
   "metadata": {
-    "author": "Skynet Lite Phase 2 Team",
+    "author": "Skynet Core Phase 2 Team",
     "created": "2025-08-22T00:00:00Z",
     "updated": "2025-08-22T00:00:00Z",
     "tags": ["database", "sql", "sqlite", "postgresql", "mongodb", "data"],

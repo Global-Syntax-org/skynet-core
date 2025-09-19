@@ -479,4 +479,4 @@ ollama pull mistral
 ollama list
 ```
 
-This deployment guide ensures reliable production deployment and smooth development workflow for Skynet Lite.
+This deployment guide ensures reliable production deployment and smooth development workflow for Skynet Core.

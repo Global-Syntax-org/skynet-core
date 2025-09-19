@@ -250,4 +250,4 @@ class PluginProtocol(Protocol):
 - **CI/CD Pipeline**: Automated testing and quality checks
 - **Documentation**: Comprehensive API and architecture documentation
 
-This release establishes Skynet Lite as a robust, modular AI chatbot system with strong privacy protections, comprehensive testing, and records retention integration capabilities.
+This release establishes Skynet Core as a robust, modular AI chatbot system with strong privacy protections, comprehensive testing, and records retention integration capabilities.

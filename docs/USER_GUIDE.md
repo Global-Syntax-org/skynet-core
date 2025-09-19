@@ -113,7 +113,7 @@ The web interface works on mobile devices:
 
 #### Memory Management
 
-Skynet Lite remembers your conversation:
+Skynet Core remembers your conversation:
 - Keeps track of previous questions and answers
 - Maintains context across multiple messages
 - Automatically manages memory to prevent overload
@@ -337,7 +337,7 @@ You: Can you give me a more detailed explanation?
 1. Check if Ollama is running: `ollama ps`
 2. Restart Ollama: `ollama serve`
 3. Check model is downloaded: `ollama list`
-4. Restart Skynet Lite
+4. Restart Skynet Core
 
 #### "Web search not working"
 
@@ -492,7 +492,7 @@ Extend the web search functionality by modifying `tools/web_search.py`.
 
 ### Integration with Other Tools
 
-Skynet Lite can be integrated with:
+Skynet Core can be integrated with:
 - Jupyter notebooks
 - VS Code extensions
 - Custom applications via API
@@ -519,4 +519,4 @@ queries = ["What is AI?", "Explain machine learning", "Current AI trends"]
 asyncio.run(batch_process(queries))
 ```
 
-This user guide covers all essential aspects of using Skynet Lite effectively. For technical details, see the API Reference and Deployment Guide.
+This user guide covers all essential aspects of using Skynet Core effectively. For technical details, see the API Reference and Deployment Guide.

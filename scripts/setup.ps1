@@ -1,6 +1,6 @@
-# GitHub Repository Setup Script for Skynet Lite
+# GitHub Repository Setup Script for Skynet Core
 
-Write-Host "🚀 Setting up Skynet Lite for GitHub..." -ForegroundColor Green
+Write-Host "🚀 Setting up Skynet Core for GitHub..." -ForegroundColor Green
 
 # Initialize git if not already done
 if (-not (Test-Path ".git")) {
@@ -12,7 +12,7 @@ if (-not (Test-Path ".git")) {
 git add .
 
 # Initial commit
-git commit -m "🎉 Initial commit: Skynet Lite v1.0.0
+git commit -m "🎉 Initial commit: Skynet Core v1.0.0
 
 - Local AI chatbot with Ollama integration
 - Web search capabilities with Bing API

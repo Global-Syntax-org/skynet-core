@@ -1,6 +1,6 @@
 # Microsoft Copilot Integration Guide
 
-This guide explains how to integrate Microsoft Copilot with Skynet Lite as an AI model provider.
+This guide explains how to integrate Microsoft Copilot with Skynet Core as an AI model provider.
 
 ## Overview
 
@@ -108,7 +108,7 @@ asyncio.run(test_ms_copilot())
 
 ### Integration Test
 
-Once configured, test in Skynet Lite:
+Once configured, test in Skynet Core:
 
 ```bash
 # Run Skynet with Microsoft Copilot
@@ -188,7 +188,7 @@ curl -X POST "https://your-endpoint.com/copilot/v1/chat/completions" \
 
 ## Fallback Behavior
 
-Skynet Lite tries AI models in this order:
+Skynet Core tries AI models in this order:
 
 1. **Ollama** (Primary - Local LLM)
 2. **OpenAI** (if `OPENAI_API_KEY` is set)
@@ -266,7 +266,7 @@ For Microsoft Copilot-specific integration issues:
 1. Check [Microsoft Copilot documentation](https://docs.microsoft.com/copilot)
 2. Review [Azure Cognitive Services docs](https://docs.microsoft.com/azure/cognitive-services)
 3. Check the `loaders/microsoft_copilot_loader.py` implementation
-4. Open an issue in the Skynet Lite repository with debug logs
+4. Open an issue in the Skynet Core repository with debug logs
 5. Contact Microsoft Azure support for API-related issues
 
 ## API Reference

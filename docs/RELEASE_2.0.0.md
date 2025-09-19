@@ -1,8 +1,8 @@
-## Skynet Lite 2.0.0 - 2025-08-24 (Draft)
+## Skynet Core 2.0.0 - 2025-08-24 (Draft)
 
 Summary
 -------
-Skynet Lite 2.0.0 is a records-retention focused release that introduces a retention policy engine, MSSQL compliance adapter, and a set of tools and templates for archival and export workflows. This release hardens configuration handling and includes several reliability and data-protection fixes.
+Skynet Core 2.0.0 is a records-retention focused release that introduces a retention policy engine, MSSQL compliance adapter, and a set of tools and templates for archival and export workflows. This release hardens configuration handling and includes several reliability and data-protection fixes.
 
 Highlights
 ----------
@@ -40,7 +40,7 @@ Testing & verification
 Contact
 -------
 If you run into issues during upgrade, open an issue on this repository and include the following information:
-- Skynet Lite version before upgrade
+- Skynet Core version before upgrade
 - Database type and version
 - A short reproducible test case or the failing log snippets
 

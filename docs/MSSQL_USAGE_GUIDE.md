@@ -1,6 +1,6 @@
-# Using MSSQL with Skynet Lite
+# Using MSSQL with Skynet Core
 
-This guide shows you how to configure and use Microsoft SQL Server (MSSQL) as the storage backend for Skynet Lite.
+This guide shows you how to configure and use Microsoft SQL Server (MSSQL) as the storage backend for Skynet Core.
 
 ## Prerequisites
 
@@ -39,7 +39,7 @@ docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=$SA_PASSWORD" \
 # Create database (optional - adapter will create if needed)
 docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd \
     -S localhost -U SA -P "$SA_PASSWORD" \
-    -Q "CREATE DATABASE skynet_lite"
+    -Q "CREATE DATABASE skynet_core"
 ```
 
 ## Configuration Methods
@@ -50,7 +50,7 @@ docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd \
 # Set environment variables
 export SKYNET_STORAGE_TYPE=mssql
 export MSSQL_SERVER=localhost
-export MSSQL_DATABASE=skynet_lite
+export MSSQL_DATABASE=skynet_core
 export MSSQL_USERNAME=sa
 # Do NOT commit real passwords to source control. Set the password in your shell or use a secrets manager.
 export MSSQL_PASSWORD=$MSSQL_PASSWORD
@@ -68,7 +68,7 @@ mssql_config = {
     "type": "mssql",
     "config": {
         "server": "localhost",
-        "database": "skynet_lite",
+        "database": "skynet_core",
         "username": "sa",
     "password": os.getenv("MSSQL_PASSWORD") or "(set via environment)",
         "encrypt": True,
@@ -82,7 +82,7 @@ windows_auth_config = {
     "type": "mssql", 
     "config": {
         "server": "localhost\\SQLEXPRESS",
-        "database": "skynet_lite",
+        "database": "skynet_core",
         "trusted_connection": True,
         "encrypt": True,
         "trust_server_certificate": True
@@ -94,7 +94,7 @@ azure_config = {
     "type": "mssql",
     "config": {
         "server": "your-server.database.windows.net",
-        "database": "skynet_lite",
+        "database": "skynet_core",
         "username": "your-admin@your-server",
     "password": os.getenv("AZURE_SQL_PASSWORD") or "(set via environment)",
         "encrypt": True,
@@ -124,7 +124,7 @@ async def main():
         "type": "mssql",
         "config": {
             "server": "localhost",
-            "database": "skynet_lite",
+            "database": "skynet_core",
             "username": "sa", 
             "password": os.getenv("MSSQL_PASSWORD") or "(set via environment)",
             "encrypt": True,
@@ -171,7 +171,7 @@ async def advanced_mssql_demo():
         "type": "mssql",
         "config": {
             "server": "localhost",
-            "database": "skynet_lite",
+            "database": "skynet_core",
             "username": "sa",
             "password": os.getenv("MSSQL_PASSWORD") or "(set via environment)", 
             "encrypt": True,
@@ -240,7 +240,7 @@ async def setup_storage():
         "type": "mssql",
         "config": {
             "server": "localhost",
-            "database": "skynet_lite",
+            "database": "skynet_core",
             "username": "sa",
             "password": os.getenv("MSSQL_PASSWORD") or "(set via environment)",
             "encrypt": True,
@@ -276,7 +276,7 @@ async def main():
 | Parameter | Description | Default | Required |
 |-----------|-------------|---------|----------|
 | `server` | SQL Server hostname/IP | `localhost` | Yes |
-| `database` | Database name | `skynet_lite` | Yes |
+| `database` | Database name | `skynet_core` | Yes |
 | `username` | SQL auth username | None | No* |
 | `password` | SQL auth password | None | No* |
 | `trusted_connection` | Use Windows auth | `False` | No |
@@ -292,17 +292,17 @@ async def main():
 
 ### Local SQL Server Express
 ```
-Driver={ODBC Driver 17 for SQL Server};Server=localhost\SQLEXPRESS;Database=skynet_lite;Trusted_Connection=yes;Encrypt=yes;TrustServerCertificate=yes
+Driver={ODBC Driver 17 for SQL Server};Server=localhost\SQLEXPRESS;Database=skynet_core;Trusted_Connection=yes;Encrypt=yes;TrustServerCertificate=yes
 ```
 
 ### Remote SQL Server with SQL Auth
 ```
-Driver={ODBC Driver 17 for SQL Server};Server=myserver.com;Database=skynet_lite;UID=myuser;PWD=mypass;Encrypt=yes
+Driver={ODBC Driver 17 for SQL Server};Server=myserver.com;Database=skynet_core;UID=myuser;PWD=mypass;Encrypt=yes
 ```
 
 ### Azure SQL Database
 ```
-Driver={ODBC Driver 17 for SQL Server};Server=myserver.database.windows.net;Database=skynet_lite;UID=myadmin@myserver;PWD=mypass;Encrypt=yes
+Driver={ODBC Driver 17 for SQL Server};Server=myserver.database.windows.net;Database=skynet_core;UID=myadmin@myserver;PWD=mypass;Encrypt=yes
 ```
 
 ## Troubleshooting

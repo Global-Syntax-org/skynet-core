@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Skynet Lite project now includes a comprehensive storage abstraction layer that provides a unified interface for multiple storage backends. This abstraction allows the system to work with different storage solutions without changing application code.
+The Skynet Core project now includes a comprehensive storage abstraction layer that provides a unified interface for multiple storage backends. This abstraction allows the system to work with different storage solutions without changing application code.
 
 ## Architecture
 

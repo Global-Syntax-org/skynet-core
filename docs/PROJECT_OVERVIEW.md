@@ -400,4 +400,4 @@ plugins:
 - **Dynamic loading**: Runtime plugin discovery and loading
 - **Error isolation**: Plugin failures don't crash main system
 
-This documentation reflects the current modular architecture and development patterns used throughout Skynet Lite, providing a comprehensive guide for developers working with the system.
+This documentation reflects the current modular architecture and development patterns used throughout Skynet Core, providing a comprehensive guide for developers working with the system.

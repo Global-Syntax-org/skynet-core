@@ -26,7 +26,7 @@ def main():
     
     try:
         # Get the correct Python executable
-        python_path = "/home/stux/repos/skynet-lite/.venv/bin/python"
+        python_path = "/home/stux/repos/skynet-core/.venv/bin/python"
         if not os.path.exists(python_path):
             python_path = sys.executable
         

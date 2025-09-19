@@ -356,7 +356,7 @@ tests/
 ```python
 import pytest
 from unittest.mock import Mock, patch
-from skynet_lite.loaders.ollama_loader import OllamaLoader
+from skynet_core.loaders.ollama_loader import OllamaLoader
 
 @pytest.mark.asyncio
 async def test_ollama_loader_initialization():
@@ -381,7 +381,7 @@ async def test_ollama_loader_generate_response():
 #### Integration Tests
 ```python
 @pytest.mark.asyncio
-async def test_skynet_lite_with_web_search():
+async def test_skynet_core_with_web_search():
     """Test SkynetLite integrates web search correctly."""
     skynet = SkynetLite()
     await skynet.initialize()
@@ -401,7 +401,7 @@ python_classes = Test*
 python_functions = test_*
 addopts = 
     --asyncio-mode=auto
-    --cov=skynet_lite
+    --cov=skynet_core
     --cov-report=html
     --cov-report=term-missing
 ```
@@ -416,7 +416,7 @@ pytest
 pytest tests/test_main.py
 
 # Run with coverage
-pytest --cov=skynet_lite --cov-report=html
+pytest --cov=skynet_core --cov-report=html
 
 # Run only unit tests
 pytest tests/unit/
@@ -455,8 +455,8 @@ pytest -k "test_ollama"
 #### Code Examples
 Always include working examples:
 ```python
-# Example: Using Skynet Lite programmatically
-from skynet_lite import SkynetLite
+# Example: Using Skynet Core programmatically
+from skynet_core import SkynetCore
 import asyncio
 
 async def main():
@@ -474,10 +474,10 @@ if __name__ == "__main__":
 
 ```bash
 # Generate API documentation
-python3 -m pydoc -w skynet_lite
+python3 -m pydoc -w skynet_core
 
 # Check documentation links
-pytest --doctest-modules skynet_lite/
+pytest --doctest-modules skynet_core/
 
 # Spell check (if available)
 cspell "docs/**/*.md"
@@ -492,7 +492,7 @@ Include the following information:
 1. **Environment Details**:
    - Operating system
    - Python version
-   - Skynet Lite version
+   - Skynet Core version
    - Ollama version (if applicable)
 
 2. **Steps to Reproduce**:
@@ -596,4 +596,4 @@ New contributors can:
 - [Ollama API Documentation](https://github.com/ollama/ollama/blob/main/docs/api.md)
 - [pytest Documentation](https://docs.pytest.org/)
 
-Thank you for contributing to Skynet Lite! Your contributions help make privacy-first AI accessible to everyone.
+Thank you for contributing to Skynet Core! Your contributions help make privacy-first AI accessible to everyone.

@@ -1,4 +1,4 @@
-# Skynet Lite API Reference
+# Skynet Core API Reference
 
 ## Core Classes
 
@@ -8,7 +8,7 @@ Main orchestrator class that coordinates all components.
 
 ```python
 class SkynetLite:
-    """Main Skynet Lite chatbot orchestrator"""
+    """Main Skynet Core chatbot orchestrator"""
     
     def __init__(self) -> None:
         """Initialize with default configuration"""
@@ -416,7 +416,7 @@ class PluginProtocol(Protocol):
 
 ```python
 class SkynetLiteError(Exception):
-    """Base exception for Skynet Lite"""
+    """Base exception for Skynet Core"""
     pass
 
 class ConfigurationError(SkynetLiteError):
@@ -540,4 +540,4 @@ class CustomPlugin:
         self.initialized = False
 ```
 
-This API reference provides comprehensive documentation for all major components and interfaces in Skynet Lite, following the project's modular architecture and async patterns.
+This API reference provides comprehensive documentation for all major components and interfaces in Skynet Core, following the project's modular architecture and async patterns.

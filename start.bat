@@ -1,6 +1,6 @@
 @echo off
-REM Skynet Lite startup script for Windows
-echo 🚀 Starting Skynet Lite...
+REM Skynet Core startup script for Windows
+echo 🚀 Starting Skynet Core...
 echo.
 
 REM Check if Python is available
@@ -30,8 +30,8 @@ if not exist "venv\" (
     call venv\Scripts\activate.bat
 )
 
-REM Start Skynet Lite
-echo ✅ Launching Skynet Lite...
+REM Start Skynet Core
+echo ✅ Launching Skynet Core...
 python main.py
 
 pause

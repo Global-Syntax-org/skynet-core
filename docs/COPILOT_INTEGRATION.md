@@ -1,10 +1,10 @@
 # GitHub Copilot Integration Guide
 
-This guide explains how to integrate GitHub Copilot with Skynet Lite as an AI model provider.
+This guide explains how to integrate GitHub Copilot with Skynet Core as an AI model provider.
 
 ## Overview
 
-GitHub Copilot integration in Skynet Lite allows you to use Copilot as a fallback AI model when local Ollama is unavailable or when you prefer cloud-based AI assistance.
+GitHub Copilot integration in Skynet Core allows you to use Copilot as a fallback AI model when local Ollama is unavailable or when you prefer cloud-based AI assistance.
 
 ## Important Note
 
@@ -55,7 +55,7 @@ You can create a proxy service that:
 
 Example proxy architecture:
 ```
-Skynet Lite → Your Proxy Server → VS Code Copilot Extension → GitHub Copilot
+Skynet Core → Your Proxy Server → VS Code Copilot Extension → GitHub Copilot
 ```
 
 ### Option 3: Development Integration
@@ -127,7 +127,7 @@ curl -X POST "your_copilot_api_url" \
 
 ## Fallback Behavior
 
-Skynet Lite tries AI models in this order:
+Skynet Core tries AI models in this order:
 
 1. **Ollama** (Primary - Local LLM)
 2. **OpenAI** (if `OPENAI_API_KEY` is set)
@@ -158,5 +158,5 @@ For Copilot-specific integration issues:
 
 1. Check the [GitHub Copilot documentation](https://docs.github.com/en/copilot)
 2. Review the `loaders/copilot_loader.py` implementation
-3. Open an issue in the Skynet Lite repository with debug logs
+3. Open an issue in the Skynet Core repository with debug logs
 4. Consult your organization's Copilot administrators (for enterprise users)
