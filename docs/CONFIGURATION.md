@@ -101,7 +101,4 @@ python -c "from skynet.config import Config; Config().create_default_config_file
   depends on `pyyaml`). This is low-risk and improves interoperability with other tooling.
 - Centralize configuration schema in one place (extend `Config` with additional fields used project-wide).
 
----
 
-If you'd like, I can also add a `docs/CONFIGURATION-EXAMPLES.md` with common deployment setups (local-only,
-cloud-first, provider fallbacks) or update the project README to reference this page.
