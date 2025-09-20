@@ -1,6 +1,25 @@
 # 🤖 Skynet Core
 
-- **Current Version**: 2.0.0-core
+- *A hybrid AI chatbot with local-first processing and cloud fallback capabilities. Features advanced web search, enterprise storage options, multi-model intelligence, and comprehensive document management for both local privacy and cloud scalability.
+
+## 🚀 Quick Startn**: 2.1.0-core
+
+A hybrid AI chatbot with local-first processing and cloud fallback capabilities. Features advanced web search, enterprise storage options, multi-model intelligence, and comprehensive document management for both local privacy and cloud scalability.
+
+## ✨ Features
+
+- **🧠 Local-First AI Processing** - Ollama integration with intelligent cloud provider fallback
+- **📄 Document Management** - Upload, process, and search documents (PDF, DOCX, XLSX, TXT, MD, CSV)
+- **🔍 Smart Document Search** - AI-powered document content retrieval with relevance scoring
+- **💾 Flexible Storage** - SQLite default with optional MSSQL, file, and memory backends
+- **🌐 Modern Web Interface** - Responsive Flask-based web UI with real-time chat and document management
+- **🔌 Plugin Architecture** - Modular system with Semantic Kernel integration
+- **🏢 Enterprise Ready** - Scalable storage and cloud provider options
+- **🚀 High Performance** - Async architecture with concurrent AI processing
+- **🎯 Multi-Model Intelligence** - Seamless switching between local and cloud AI providers
+- **🔄 Smart Fallback** - Automatic provider switching for maximum reliability
+- **🛠️ Development Tools** - Comprehensive testing and diagnostic utilities
+- **Current Version**: 2.1.0-core
 
 A hybrid AI chatbot with local-first processing and cloud fallback capabilities. Features advanced web search, enterprise storage options, and multi-model intelligence for both local privacy and cloud scalability.
 
@@ -72,7 +91,7 @@ A hybrid AI chatbot with local-first processing and cloud fallback capabilities.
 
 > **Note**: Skynet Core automatically tries Ollama first, then falls back to configured cloud providers if needed.
    python3 run.py
-   # Open http://localhost:5050 in your browser
+   # Open http://localhost:5005 in your browser
    ```
 
 ## 🏗️ Architecture
@@ -85,6 +104,7 @@ skynet-core/
 │   ├── config.py        # Configuration management
 │   ├── loader_manager.py # AI provider management with fallback
 │   ├── memory.py        # Conversation memory
+│   ├── document_processor.py # Document upload, processing, and search
 │   └── storage/         # Storage abstraction layer
 │       ├── base.py      # Abstract storage interface
 │       ├── sqlite_adapter.py # SQLite storage (default)
@@ -98,10 +118,16 @@ skynet-core/
 │   ├── claude_loader.py # Anthropic Claude
 │   ├── gemini_loader.py # Google Gemini
 │   └── *_copilot_loader.py # GitHub/Microsoft Copilot
-├── web/                 # Web UI interface
-│   ├── app.py           # Flask web application
+├── web/                 # Web UI interface (modular architecture)
+│   ├── app.py           # Main Flask application and configuration
+│   ├── auth_routes.py   # Authentication and user management routes
+│   ├── chat_routes.py   # Chat messaging and conversation history
+│   ├── document_routes.py # Document upload and management API
+│   ├── password_routes.py # Password reset and token management
+│   ├── static_routes.py # Static pages and utility endpoints
+│   ├── auth.py          # Authentication manager and security
 │   ├── run.py           # Web UI launcher
-│   ├── templates/       # HTML templates
+│   ├── templates/       # HTML templates with document management
 │   └── static/          # CSS and static assets
 ├── tools/
 │   └── web_search.py    # Web search integration
@@ -215,6 +241,19 @@ You: What's the latest news about AI?
 🤖 Skynet: Based on recent search results, here are the latest AI developments...
 ```
 
+### Document Management
+```
+# Upload documents through the web interface
+1. Click "Documents" button in the web UI
+2. Drag & drop or select files (PDF, DOCX, XLSX, TXT, MD, CSV)
+3. Documents are processed and indexed automatically
+
+# AI will search your documents for relevant context
+You: What did the quarterly report say about revenue?
+🔍 Searching your documents...
+🤖 Skynet: Based on your uploaded quarterly report, revenue increased by...
+```
+
 ### AI Model Switching
 ```
 # Copilot coding assistance
@@ -265,6 +304,13 @@ class RetentionManager:
         """Apply retention policy to a record"""
         # ...implementation placeholder...
 ```
+
+## 📖 Documentation
+
+- **[Document Management Guide](docs/DOCUMENT_MANAGEMENT.md)** - Complete guide to document upload and search
+- **[Web Architecture Guide](docs/WEB_ARCHITECTURE.md)** - Modular Blueprint architecture documentation  
+- **[API Reference](DOCUMENT_FEATURE_SUMMARY.md)** - Document management API endpoints
+- **[Contributing Guide](CONTRIBUTING.md)** - Development guidelines and contribution process
 
 ## 🧪 Testing
 
@@ -359,9 +405,12 @@ MIT License - see [LICENSE](LICENSE) file for details.
 - [x] Multi-model support (OpenAI, Claude, Gemini, Copilot)
 - [x] DuckDuckGo search integration
 - [x] Flask web interface with diagnostics
- - [ ] Voice interface integration
- - [ ] Advanced records retention plugins
- - [ ] Workflow and coordination for retention policies
+- [x] Document upload and management system
+- [x] Document search and AI integration
+- [x] Modular Blueprint architecture for maintainability
+- [ ] Voice interface integration
+- [ ] Advanced records retention plugins
+- [ ] Workflow and coordination for retention policies
 - [ ] Custom training pipeline
 - [ ] Docker containerization
 - [ ] API authentication and rate limiting

@@ -4,7 +4,13 @@ Welcome to the Skynet Core documentation! This index helps you find the right do
 
 ## Quick Start
 
-**New to Skynet Core?** Start here:
+**Web Interface:**
+- Main chat: `http://localhost:5050/`
+- Health check: `http://localhost:5050/health`
+- Chat API: `POST http://localhost:5050/chat`
+- Clear session: `POST http://localhost:5050/clear`
+
+**Ollama:**o Skynet Core?** Start here:
 1. [User Guide](docs/USER_GUIDE.md) - Complete guide for end users
 2. [Installation](README.md#quick-start) - Get up and running in 5 minutes
 3. [Web Interface Tutorial](docs/USER_GUIDE.md#using-the-web-interface) - Using the browser interface
@@ -159,10 +165,10 @@ cd web && python3 diagnose.py
 ### Important URLs & Endpoints
 
 **Web Interface:**
-- Main chat: `http://localhost:5000/`
-- Health check: `http://localhost:5000/health`
-- Chat API: `POST http://localhost:5000/chat`
-- Clear session: `POST http://localhost:5000/clear`
+- Main chat: `http://localhost:5050/`
+- Health check: `http://localhost:5050/health`
+- Chat API: `POST http://localhost:5050/chat`
+- Clear session: `POST http://localhost:5050/clear`
 
 **Ollama:**
 - Service: `http://localhost:11434/`

@@ -59,7 +59,7 @@ def main():
     check_ollama()
     
     print("\n🌐 Starting web interface...")
-    print("🔗 Open http://localhost:5000 in your browser")
+    print("🔗 Open http://localhost:5050 in your browser")
     print("🛑 Press Ctrl+C to stop")
     print("-" * 40)
     

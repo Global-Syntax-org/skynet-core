@@ -1,0 +1,308 @@
+<!-- Document Management Modal -->
+<div class="modal fade" id="documentsModal" tabindex="-1" aria-labelledby="documentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="documentsModalLabel">📁 Document Manager</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Upload Section -->
+                <div class="mb-4">
+                    <h6>📤 Upload New Document</h6>
+                    <div class="upload-area border-2 border-dashed border-primary rounded p-4 text-center" id="uploadArea">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                            <p class="mb-2">Drag and drop files here or click to browse</p>
+                            <p class="text-muted small">Supported: PDF, DOCX, TXT, CSV, MD (Max 10MB)</p>
+                            <input type="file" id="fileInput" class="d-none" multiple 
+                                   accept=".pdf,.docx,.txt,.csv,.md,.xlsx">
+                            <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                Choose Files
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Progress -->
+                    <div id="uploadProgress" class="mt-3" style="display: none;">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <span id="uploadStatus">Uploading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents List -->
+                <div>
+                    <h6>📋 Your Documents</h6>
+                    <div id="documentsList">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-spinner fa-spin"></i> Loading documents...
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="refreshDocuments()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.upload-area {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.upload-area.dragover {
+    background-color: rgba(13, 110, 253, 0.1);
+    border-color: #0d6efd !important;
+}
+
+.document-item {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 15px;
+    transition: all 0.2s ease;
+}
+
+.document-item:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.02);
+}
+
+.document-stats {
+    font-size: 0.85em;
+    color: #6c757d;
+}
+
+.document-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.775rem;
+}
+</style>
+
+<script>
+// Document upload functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    
+    // Drag and drop handlers
+    uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        handleFileUpload(files);
+    });
+    
+    // Click to upload
+    uploadArea.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', function() {
+        handleFileUpload(this.files);
+    });
+    
+    // Load documents when modal is shown
+    document.getElementById('documentsModal').addEventListener('shown.bs.modal', function() {
+        loadDocuments();
+    });
+});
+
+async function handleFileUpload(files) {
+    if (!files || files.length === 0) return;
+    
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = uploadProgress.querySelector('.progress-bar');
+    const uploadStatus = document.getElementById('uploadStatus');
+    
+    uploadProgress.style.display = 'block';
+    
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Update status
+        uploadStatus.textContent = `Uploading ${file.name} (${i + 1}/${files.length})...`;
+        
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await fetch('/api/documents/upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showToast(`✅ ${result.message}`, 'success');
+            } else {
+                showToast(`❌ ${result.message}`, 'error');
+            }
+            
+        } catch (error) {
+            showToast(`❌ Failed to upload ${file.name}: ${error.message}`, 'error');
+        }
+        
+        // Update progress
+        const progress = ((i + 1) / files.length) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+    
+    uploadStatus.textContent = 'Upload complete!';
+    setTimeout(() => {
+        uploadProgress.style.display = 'none';
+        progressBar.style.width = '0%';
+    }, 2000);
+    
+    // Refresh documents list
+    loadDocuments();
+}
+
+async function loadDocuments() {
+    const documentsList = document.getElementById('documentsList');
+    
+    try {
+        const response = await fetch('/api/documents/list');
+        const result = await response.json();
+        
+        if (result.success && result.documents.length > 0) {
+            documentsList.innerHTML = result.documents.map(doc => `
+                <div class="document-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">📄 ${escapeHtml(doc.original_name)}</h6>
+                            <div class="document-stats">
+                                <small>
+                                    📊 ${formatFileSize(doc.size)} • 
+                                    📝 ${doc.text_length.toLocaleString()} chars • 
+                                    🔀 ${doc.chunk_count} chunks • 
+                                    📅 ${formatDate(doc.upload_time)}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <button class="btn btn-outline-primary btn-sm" onclick="askAboutDocument('${doc.id}', '${escapeHtml(doc.original_name)}')">
+                                <i class="fas fa-question-circle"></i> Ask
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteDocument('${doc.id}', '${escapeHtml(doc.original_name)}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            documentsList.innerHTML = `
+                <div class="text-center text-muted p-4">
+                    <i class="fas fa-file-alt fa-2x mb-2"></i>
+                    <p>No documents uploaded yet.</p>
+                    <p class="small">Upload your first document to get started!</p>
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        documentsList.innerHTML = `
+            <div class="text-center text-danger p-4">
+                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                <p>Error loading documents: ${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+async function deleteDocument(documentId, documentName) {
+    if (!confirm(`Are you sure you want to delete "${documentName}"?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/documents/${documentId}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showToast(`✅ Document "${documentName}" deleted successfully`, 'success');
+            loadDocuments();
+        } else {
+            showToast(`❌ Failed to delete document: ${result.message}`, 'error');
+        }
+        
+    } catch (error) {
+        showToast(`❌ Error deleting document: ${error.message}`, 'error');
+    }
+}
+
+function askAboutDocument(documentId, documentName) {
+    // Close the modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('documentsModal'));
+    modal.hide();
+    
+    // Set focus to chat input and add helpful text
+    const chatInput = document.getElementById('messageInput');
+    if (chatInput) {
+        chatInput.value = `Tell me about the document "${documentName}". `;
+        chatInput.focus();
+        chatInput.setSelectionRange(chatInput.value.length, chatInput.value.length);
+    }
+    
+    showToast(`📄 Ready to ask questions about "${documentName}"`, 'info');
+}
+
+function refreshDocuments() {
+    loadDocuments();
+}
+
+// Utility functions
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>

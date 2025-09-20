@@ -4,6 +4,7 @@ import inspect
 
 from .loader_manager import LoaderManager
 from .memory import MemoryManager
+from .document_processor import DocumentProcessor
 
 logger = logging.getLogger("SkynetCore.Assistant")
 
@@ -16,6 +17,7 @@ class SkynetLite:
         self.memory_manager = memory_manager or MemoryManager()
         self.search_tool = None
         self.config = config or self._load_config()
+        self.document_processor = DocumentProcessor()
 
     def _load_config(self):
         """Load configuration using the proper Config class"""
@@ -70,7 +72,7 @@ class SkynetLite:
             logger.error(f"Failed to initialize Skynet Core: {e}")
             return False
 
-    async def chat(self, user_message: str) -> str:
+    async def chat(self, user_message: str, user_id: str = None) -> str:
         """Process a single chat message and return response"""
         try:
             if not user_message.strip():
@@ -79,11 +81,16 @@ class SkynetLite:
             # Add to memory
             self.memory_manager.add_user_message(user_message)
 
+            # Search for relevant documents if user_id is provided
+            document_context = ""
+            if user_id:
+                document_context = await self._search_user_documents(user_message, user_id)
+
             # Check if web search is needed
             if await self._needs_web_search(user_message):
-                response = await self._handle_web_search_query(user_message)
+                response = await self._handle_web_search_query(user_message, document_context)
             else:
-                response = await self._handle_local_query(user_message)
+                response = await self._handle_local_query(user_message, document_context)
 
             # Add response to memory
             self.memory_manager.add_assistant_message(response)
@@ -145,7 +152,30 @@ class SkynetLite:
 
         return any(indicator in query.lower() for indicator in web_indicators)
 
-    async def _handle_web_search_query(self, query: str) -> str:
+    async def _search_user_documents(self, query: str, user_id: str) -> str:
+        """Search user's documents for relevant context"""
+        try:
+            print(f"🔍 Searching documents for user {user_id} with query: '{query}'")
+            results = await self.document_processor.search_documents(query, user_id, max_results=3)
+            print(f"🔍 Found {len(results)} document search results")
+            if not results:
+                return ""
+            
+            context_parts = []
+            for result in results:
+                print(f"🔍 Document result: {result['document_name']}, score: {result['relevance_score']}")
+                context_parts.append(f"From {result['document_name']}: {result['text'][:500]}...")
+            
+            context = "\n\n".join(context_parts)
+            print(f"🔍 Document context length: {len(context)} characters")
+            return context
+        except Exception as e:
+            logger.error(f"Document search error: {e}")
+            import traceback
+            traceback.print_exc()
+            return ""
+
+    async def _handle_web_search_query(self, query: str, document_context: str = "") -> str:
         """Handle queries that require web search"""
         try:
             print("🔍 Searching the web...")
@@ -156,9 +186,16 @@ class SkynetLite:
             full_prompt = f"""Based on the following search results, provide a helpful answer to the user's question: "{query}"
 
 Search Results:
-{search_results}
+{search_results}"""
 
-Please provide a concise, accurate answer based on this information. Be specific and cite key facts from the search results."""
+            # Add document context if available
+            if document_context:
+                full_prompt += f"""
+
+Relevant information from your uploaded documents:
+{document_context}"""
+
+            full_prompt += "\n\nPlease provide a concise, accurate answer based on this information. Be specific and cite key facts from the search results and documents."
 
             return await self._generate_completion(full_prompt)
 
@@ -166,7 +203,7 @@ Please provide a concise, accurate answer based on this information. Be specific
             logger.error(f"Web search error: {e}")
             return f"Sorry, I encountered an error while searching: {str(e)}"
 
-    async def _handle_local_query(self, query: str) -> str:
+    async def _handle_local_query(self, query: str, document_context: str = "") -> str:
         """Handle queries using local LLM only"""
         try:
             # Get conversation history for context
@@ -177,13 +214,22 @@ Please provide a concise, accurate answer based on this information. Be specific
                 full_prompt = f"""Previous conversation:
 {history}
 
-User: {query}
-Assistant:"""
+User: {query}"""
             else:
                 full_prompt = f"""You are Skynet Core, a helpful AI assistant powered by local AI technology. You are knowledgeable, friendly, and provide accurate information. Respond naturally and helpfully to the user's question.
 
-User: {query}
-Assistant:"""
+User: {query}"""
+
+            # Add document context if available
+            if document_context:
+                full_prompt += f"""
+
+Relevant information from your uploaded documents:
+{document_context}
+
+Please incorporate this document information into your response when relevant."""
+
+            full_prompt += "\nAssistant:"
 
             response = await self._generate_completion(full_prompt)
             return response or "I'm having trouble generating a response right now. Please try again."

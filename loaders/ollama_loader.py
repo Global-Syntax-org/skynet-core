@@ -14,6 +14,11 @@ class OllamaModelLoader:
         self.session = None
         self.available_models = []
     
+    def _get_resolved_url(self, endpoint: str = "") -> str:
+        """Get URL with localhost resolved to 127.0.0.1 to avoid IPv6 issues"""
+        resolved_base = self.base_url.replace('localhost', '127.0.0.1')
+        return f"{resolved_base}{endpoint}"
+    
     async def __aenter__(self):
         self.session = aiohttp.ClientSession()
         return self
@@ -25,11 +30,22 @@ class OllamaModelLoader:
     async def initialize(self):
         """Initialize the session and check Ollama availability"""
         if not self.session:
-            self.session = aiohttp.ClientSession()
+            # Create aiohttp session with IPv4-only connector to avoid IPv6 issues
+            connector = aiohttp.TCPConnector(
+                family=2,  # Force IPv4 (socket.AF_INET)
+                local_addr=None,
+                limit=30,
+                limit_per_host=8,
+            )
+            timeout = aiohttp.ClientTimeout(total=10, connect=5)
+            self.session = aiohttp.ClientSession(
+                connector=connector,
+                timeout=timeout
+            )
         
         try:
-            # Test connection to Ollama
-            async with self.session.get(f"{self.base_url}/api/tags") as response:
+            # Test connection to Ollama with explicit localhost resolution
+            async with self.session.get(self._get_resolved_url("/api/tags")) as response:
                 if response.status == 200:
                     data = await response.json()
                     self.available_models = [model['name'] for model in data.get('models', [])]
@@ -61,7 +77,7 @@ class OllamaModelLoader:
         logger.info(f"Model {model_name} not found. Attempting to pull...")
         try:
             async with self.session.post(
-                f"{self.base_url}/api/pull",
+                self._get_resolved_url("/api/pull"),
                 json={"name": model_name}
             ) as response:
                 if response.status == 200:
@@ -113,7 +129,7 @@ class OllamaModelLoader:
             }
             
             async with self.session.post(
-                f"{self.base_url}/api/generate",
+                self._get_resolved_url("/api/generate"),
                 json=payload,
                 timeout=aiohttp.ClientTimeout(total=60)
             ) as response:
@@ -153,7 +169,7 @@ class OllamaModelLoader:
             }
             
             async with self.session.post(
-                f"{self.base_url}/api/chat",
+                self._get_resolved_url("/api/chat"),
                 json=payload,
                 timeout=aiohttp.ClientTimeout(total=60)
             ) as response:
