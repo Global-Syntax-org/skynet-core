@@ -67,12 +67,12 @@ A hybrid AI chatbot with local-first processing and cloud fallback capabilities.
    ```bash
    cd web
    python3 run.py
-   # Open http://localhost:5000 in your browser
+   # Open http://localhost:5050 in your browser
    ```
 
 > **Note**: Skynet Core automatically tries Ollama first, then falls back to configured cloud providers if needed.
    python3 run.py
-   # Open http://localhost:5000 in your browser
+   # Open http://localhost:5050 in your browser
    ```
 
 ## 🏗️ Architecture
