@@ -52,7 +52,7 @@ Skynet Core is a privacy-first AI assistant that runs entirely on your local mac
    cd web
    python3 run.py
    ```
-   Then open http://localhost:5000 in your browser
+   Then open http://localhost:5050 in your browser
    
    **Console Interface:**
    ```bash
@@ -67,7 +67,7 @@ The web interface provides a clean, chat-like experience similar to ChatGPT but 
 
 #### Starting a Conversation
 
-1. Open http://localhost:5000 in your browser
+1. Open http://localhost:5050 in your browser
 2. Type your question in the input box
 3. Press Enter or click "Send"
 4. Wait for the AI response

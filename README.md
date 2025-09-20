@@ -316,7 +316,7 @@ python3 -m pytest tests/ --cov=. --cov-report=html
 ### Web Interface Issues
 - **"Error: Sorry, I encountered an error"**: Ensure Ollama is running (`ollama serve`)
 - **Flask not found**: Run `pip install flask` or `pip install -r requirements.txt`
-- **Port 5000 in use**: Change the port in `web/app.py` line `app.run(port=5000)`
+- **Port 5050 in use**: Change the port in `web/app.py` line `app.run(port=5050)`
 
 ### Search Issues  
 - **No search results**: Check your internet connection for DuckDuckGo

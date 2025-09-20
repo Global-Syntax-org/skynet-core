@@ -514,7 +514,7 @@ def get_user_profile():
 # (Database initialized earlier during module import; avoid re-defining/initializing here.)
 if __name__ == '__main__':
     print("🌐 Starting Skynet Core Web Interface...")
-    print("🔗 Open http://localhost:5000 in your browser")
+    print("🔗 Open http://localhost:5050 in your browser")
     print("💡 Tip: Make sure Ollama is running with 'ollama serve'")
     
     # Run Flask app
@@ -522,7 +522,7 @@ if __name__ == '__main__':
     # which can close the background asyncio loop unexpectedly.
     app.run(
         host='0.0.0.0',
-        port=5000,
+        port=5050,
         debug=True,
         threaded=True,
         use_reloader=False
