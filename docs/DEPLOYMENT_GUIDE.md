@@ -123,7 +123,7 @@ python3 main.py
 2. **Create Gunicorn Configuration**
    ```python
    # gunicorn.conf.py
-   bind = "0.0.0.0:5050"
+   bind = "0.0.0.0:5005"
    workers = 4
    worker_class = "sync"
    timeout = 120

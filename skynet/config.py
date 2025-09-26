@@ -66,7 +66,7 @@ class Config:
         
         # Web Interface Configuration
         self.web_host = os.environ.get("WEB_HOST", "0.0.0.0")
-        self.web_port = int(os.environ.get("WEB_PORT", "5050"))
+        self.web_port = int(os.environ.get("WEB_PORT", "5005"))
         self.secret_key = os.environ.get("SECRET_KEY")
         
         # Debug Configuration

@@ -86,13 +86,10 @@ A hybrid AI chatbot with local-first processing and cloud fallback capabilities.
    ```bash
    cd web
    python3 run.py
-   # Open http://localhost:5050 in your browser
+   # Open http://localhost:5005 in your browser
    ```
 
 > **Note**: Skynet Core automatically tries Ollama first, then falls back to configured cloud providers if needed.
-   python3 run.py
-   # Open http://localhost:5005 in your browser
-   ```
 
 ## 🏗️ Architecture
 
@@ -362,7 +359,7 @@ python3 -m pytest tests/ --cov=. --cov-report=html
 ### Web Interface Issues
 - **"Error: Sorry, I encountered an error"**: Ensure Ollama is running (`ollama serve`)
 - **Flask not found**: Run `pip install flask` or `pip install -r requirements.txt`
-- **Port 5050 in use**: Change the port in `web/app.py` line `app.run(port=5050)`
+- **Port 5005 in use**: Change the port in `web/app.py` line `app.run(port=5005)`
 
 ### Search Issues  
 - **No search results**: Check your internet connection for DuckDuckGo

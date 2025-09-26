@@ -36,7 +36,7 @@ Simple Flask-based web interface for Skynet Core.
 
 4. **Open your browser**:
    ```
-   http://localhost:5050
+   http://localhost:5005
    ```
 
 ## Configuration
@@ -72,5 +72,5 @@ The web UI uses the same configuration as the main Skynet Core application:
 
 - **Flask not found**: Run `pip install flask`
 - **Ollama connection error**: Ensure Ollama is running on port 11434
-- **Port 5050 in use**: Change the port in `app.py`
+- **Port 5005 in use**: Change the port in `app.py`
 - **CORS issues**: Add CORS headers if needed for cross-origin requests
