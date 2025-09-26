@@ -9,9 +9,6 @@ from auth import AuthManager, login_required
 # Create blueprint for authentication routes
 auth_bp = Blueprint('auth', __name__)
 
-# Get the shared auth manager instance
-auth_manager = AuthManager()
-
 @auth_bp.route('/api/register', methods=['POST'])
 def register():
     """Handle user registration"""
@@ -27,7 +24,7 @@ def register():
         email = email.strip() if isinstance(email, str) else None
         print(f"📩 Processed email: {email}")
         
-        result = auth_manager.create_user(username, password, email)
+        result = g.auth_manager.create_user(username, password, email)
         return jsonify(result)
         
     except Exception as e:
@@ -41,7 +38,7 @@ def login():
         username = data.get('username', '').strip()
         password = data.get('password', '')
         
-        result = auth_manager.authenticate_user(username, password)
+        result = g.auth_manager.authenticate_user(username, password)
         
         if result['success']:
             # Set session
@@ -95,5 +92,16 @@ def get_user_profile():
         'username': user.username,
         'email': user.email,
         'created_at': user.created_at.isoformat(),
-        'message_count': auth_manager.get_user_message_count(user.id)
+        'message_count': g.auth_manager.get_user_message_count(user.id)
+    })
+
+@auth_bp.route('/api/debug/session', methods=['GET'])
+def debug_session():
+    """Debug endpoint to check session contents"""
+    from flask import session
+    return jsonify({
+        'session_data': dict(session),
+        'has_user_id': 'user_id' in session,
+        'user_id': session.get('user_id'),
+        'username': session.get('username')
     })
